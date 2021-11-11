@@ -8,8 +8,9 @@
 Игра представляет из себя классическую игру змейка.
 Игра предполагет разделение на модули:
 - snake.py 
-- AI.py
 - graphics.py
 - model.py
 - neural_snake.ipynb
-- 
+- exported_trained_neural_network.pkl
+
+В ноутбуке neural_snake происходит обучение нейронной сети, затем она экспортируется в другую папку
