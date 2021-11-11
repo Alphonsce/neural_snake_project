@@ -11,4 +11,5 @@
 - AI.py
 - graphics.py
 - model.py
-
+- neural_snake.ipynb
+- 
