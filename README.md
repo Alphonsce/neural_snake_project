@@ -1,2 +1,1 @@
-# neural_snake_project
-Snake university project
+#В этом репозитории находится проект
