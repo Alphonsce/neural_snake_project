@@ -19,8 +19,7 @@
 - model.ipynb
 - agent.ipynb
 - neural_snake.py
-- exported_trained_neural_network.pkl
 
 В ноутбуке model происходит обучение модели.
 
-Модель будет реализована при помощи обучения с подкреплением, с применением агента
+Модель будет реализована при помощи алгоритма Deep Q learning.
