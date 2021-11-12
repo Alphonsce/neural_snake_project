@@ -19,7 +19,7 @@ class Fruit():
 
 class Snake():
     def __init__(self, x, y):
-        self.taile = [(x-1, y)]
+        self.tail = [(x-1, y)]
         self.head = (x, y)
         self.speed = (1, 0)
         self.alive = True
@@ -35,14 +35,14 @@ class Snake():
             self.alive = False
             print(x, y)
         else:
-            for part in self.taile[1:]:
+            for part in self.tail[1:]:
                 if part == (x + Vx, y + Vy):
                     self.speed = (0, 0)
                     self.alive = False
             if self.alive:
                 if fruit != (x + Vx, y + Vy):
-                    self.taile.pop(0)
-                self.taile.append(self.head)
+                    self.tail.pop(0)
+                self.tail.append(self.head)
                 self.head = (x + Vx, y + Vy)
                 
     def up(self):
@@ -63,7 +63,7 @@ class Snake():
 
     def get_pos(self):
         """ Возвращает положения частей хвоста и головы"""
-        return (self.taile, self.head)
+        return (self.tail, self.head)
 
 
 if __name__ == "__main__":
