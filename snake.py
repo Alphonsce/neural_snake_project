@@ -20,9 +20,12 @@ class Game_field():
     def update(self):
         self.snake.move(self.fruit.get_pos())
         self.screen.fill((0, 0, 0))
-        self.screen.blit(draw_field(self.screen, *self.snake.get_pos(), self.fruit.get_pos(), self.snake.get_step()), (0, 0))
+        self.screen.blit(draw_field(
+            self.screen, *self.snake.get_pos(), 
+            self.fruit.get_pos(), self.snake.get_step()
+            ), (0, 0))
         self.interf.fill((0, 0, 0))
-        self.screen.blit(draw_interface(self.interf, self.score), (0, 0))
+        self.interf.blit(draw_interface(self.interf, self.score), (0, 0))
 
     def new_fruit(self):
         self.fruit = Fruit(*self.snake.get_pos())
@@ -47,7 +50,7 @@ class Game():
         self.GAME_RUNNING = True
 
     def start_menu(self):
-        self.mainloop(["gamer", "AI"])
+        self.mainloop(["gamer"])
 
     def mainloop(self, fields):
         self.gamer = None
