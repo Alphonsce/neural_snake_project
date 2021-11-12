@@ -23,6 +23,7 @@ class Game():
         pass
 
     def mainloop(self):
+        cells_1 = []
         snake1 = Snake(12, 12)
         while GAME_RUNNING:
             self.clock.tick(FPS)
