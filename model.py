@@ -9,7 +9,7 @@ class Fruit():
             not_founded = False
             self.pos = (random.randint(0, FIELD_SIZE_W - 1), random.randint(0, FIELD_SIZE_H - 1))
             for item in snakepose:
-                if snakepose == self.pos:
+                if item == self.pos:
                     not_founded = True
             if snakehead == self.pos:
                 not_founded = True
