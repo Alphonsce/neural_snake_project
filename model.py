@@ -19,7 +19,7 @@ class Fruit():
 
 class Snake():
     def __init__(self, x, y):
-        self.taile = []
+        self.taile = [(x-1, y)]
         self.head = (x, y)
         self.speed = (1, 0)
         self.alive = True
@@ -45,15 +45,21 @@ class Snake():
                 self.taile.append(self.head)
                 self.head = (x + Vx, y + Vy)
                 
-    def rot_right(self):
-        """ Поворот змеи направо"""
-        Vx, Vy = self.speed
-        self.speed = (-Vy, Vx)
+    def up(self):
+        if self.alive and self.speed != (0, 1):       
+            self.speed = (0, -1)
 
-    def rot_left(self):
-        """ Поворот змеи налево"""
-        Vx, Vy = self.speed
-        self.speed = (Vy, -Vx)
+    def down(self):
+        if self.alive and self.speed != (0, -1):       
+            self.speed = (0, 1)
+
+    def left(self):
+        if self.alive and self.speed != (1, 0):       
+            self.speed = (-1, 0)
+            
+    def right(self):
+        if self.alive and self.speed != (-1, 0):       
+            self.speed = (1, 0)
 
     def get_pos(self):
         """ Возвращает положения частей хвоста и головы"""

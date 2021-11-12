@@ -56,7 +56,7 @@ def draw_start_menu(buttons):
     """
     pass
 
-def draw_field(cells, surf):
+def draw_field(surf, snake_tail, snake_head, fruit):
     """ Функция рисует поле.
     Первоначльно она должна нарисовать темное поле
     Исходя из массива надо нарисовать квадратики в клеточках: 
@@ -72,9 +72,10 @@ def draw_field(cells, surf):
 
     return surf
 
-def draw_interface():
-    """ Полоса в верху экрана на которой выводится счет"""
+def draw_interface(surf, score):
+    """ Полоса в верху экрана, на которой выводится счет"""
     pass #FIXME
+    return surf
 
 def draw_text(text, size, x, y, colour, surf):
     """ Функция располагает текст на заданном холсте
