@@ -87,6 +87,7 @@ def draw_field(surf, snake_tail, snake_head, fruit, step):
             int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
             int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
             ))
+
         (x_0, y_0) = (x, y)
     (x, y) = snake_tail[0]
     x += step / FRAMES_PER_STEP * (x_0 - x)
