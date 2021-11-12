@@ -1,4 +1,5 @@
 import pygame
+import numpy as np
 from constans import *
 
 
@@ -16,8 +17,8 @@ class Button():
         self.height = self.t.get_rect().height
         self.h = h
         self.active = 0
-        self.color = 0xBE5504
-        self.act_color = 0x7A3803
+        self.color = ORANGE
+        self.act_color = DARK_ORANGE
         self.text_rect = self.t.get_rect(center=(WIDTH // 2, self.h))
         print(self.width, self.height) 
 

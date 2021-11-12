@@ -7,6 +7,8 @@ RED = (250, 0, 0)
 BLUE = (0, 0, 250)
 BLACK = (0, 0, 0)
 YELLOW = (255, 255, 0)
+ORANGE = 0xBE5504
+DARK_ORANGE = 0x7A3803
 
 # Стиль текста
 TEXT_FONT = "arial"
