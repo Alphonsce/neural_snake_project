@@ -7,8 +7,7 @@
 
 В проекте используются следующие open source библиотеки:
 - PyTorch
-- pandas
-- scikit-learn
+- matplotlib
 - numpy
 - pygame
 
@@ -16,9 +15,10 @@
 Игра предполагет разделение на модули:
 - snake.py 
 - graphics.py
-- model.ipynb
-- agent.ipynb
-- neural_snake.py
+
+- agent_for_learning.py
+- learning_model.py
+- AI_snake
 
 В ноутбуке model происходит обучение модели.
 
