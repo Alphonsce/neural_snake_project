@@ -79,8 +79,8 @@ def draw_field(surf, snake_tail, snake_head, fruit, step):
     x_0 += step / FRAMES_PER_STEP * (x_0 - x)
     y_0 += step / FRAMES_PER_STEP * (y_0 - y)
     pygame.draw.rect(surf, BLUE, (int(x_0 * CELL_SIDE), int(y_0 * CELL_SIDE), CELL_SIDE, CELL_SIDE))
-    for i in range(len(snake_tail)-1):
-        (x, y) = snake_tail[-i-1]
+    for i in range(len(snake_tail) - 1):
+        (x, y) = snake_tail[-i - 1]
         pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
             int((min(x, x_0) + k) * CELL_SIDE),
             int((min(y, y_0) + k) * CELL_SIDE),
