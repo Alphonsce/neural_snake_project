@@ -11,7 +11,7 @@ from constans import *
 class Game_field():
     def __init__(self, x):
         self.score = 0
-        self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2)
+        self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self)
         self.fruit = Fruit(*self.snake.get_pos())
         self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
         self.interf = pygame.Surface((WIDTH, BAR_HEIGHT))
@@ -20,7 +20,7 @@ class Game_field():
     def update(self):
         self.snake.move(self.fruit.get_pos())
         self.screen.fill((0, 0, 0))
-        self.screen.blit(draw_field(self.screen, *self.snake.get_pos(), self.fruit.get_pos()), (0, 0))
+        self.screen.blit(draw_field(self.screen, *self.snake.get_pos(), self.fruit.get_pos(), self.snake.get_step()), (0, 0))
         self.interf.fill((0, 0, 0))
         self.screen.blit(draw_interface(self.interf, self.score), (0, 0))
 
