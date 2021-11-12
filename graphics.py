@@ -10,18 +10,35 @@ class Button():
         x, y - положение кнопки
         w, h - ширина и высота кнопки
         """
-        pass 
+        self.text = text
+        self.t = font.render(text, True, BLACK)
+        self.width = self.t.get_rect().width
+        self.height = self.t.get_rect().height
+        self.h = h
+        self.active = 0
+        self.color = 0xBE5504
+        self.act_color = 0x7A3803
+        self.text_rect = self.t.get_rect(center=(WIDTH // 2, self.h))
+        print(self.width, self.height) 
 
     def check_pressed(self, x, y):
         """ Функция проверяет попадает ли мышь 
         в прямоугольник данной кнопки"""
-        pass
-        return False # FIXME
+        x, y = pygame.mouse.get_pos()
+        if abs(WIDTH // 2 - x) <= self.width / 2 and np.abs(self.h - y) < self.height / 2:
+            self.active = 1
+        else:
+            self.active = 0
 
     def draw_button(self):
         """ Отрисовывает кнопку
         Должна менять цвет или выделяться при наведении"""
-        pass
+        c = self.color
+        if self.active == 1:
+            c = self.act_color
+        text = font.render(self.text, True, c)
+        text_rect = text.get_rect(center = (WIDTH // 2, self.h))
+        screen.blit(text, text_rect)
 
 def draw_start_menu(buttons):
     """ На стартовом экране Не должно быть видно будущего поля.
@@ -51,7 +68,7 @@ def draw_field(cells, surf):
     Также для каждой части змеи надо сделать соединение между двумя клеточками -
     Салатовая, например(занимает 80% ширины или высоты клетки)
     """
-    pass #FIXME
+    
     return surf
 
 def draw_interface():
