@@ -1,20 +1,34 @@
-import pygame
 import numpy
+import pygame
 
+
+from model import *
 from graphics import *
-import model
+from constans import *
+
+
+
+class Game():
+    def __init__(self):
+        self.WIDTH = WIDTH
+        self.HEIGHT = HEIGHT
+        self.clock = pygame.time.Clock()
+        self.display = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.start_menu()
+
+    def start_menu(self):
+        pass
+
+    def mainloop(self):
+        pass
+
+
+
 
 def main():
-    draw_screen(pygame, display, 2)
-    screen.blit(display, (20, 40))
-    pygame.display.flip()
+    Game()
 
 if __name__ == "__main__":
     pygame.init()
-    screen = pygame.display.set_mode((300, 400))
-    display = pygame.Surface((800, 800))
     main()
-    x = 0
-    while x < 10000000:
-        x+=1
     pygame.quit()
