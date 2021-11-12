@@ -81,17 +81,17 @@ def draw_field(surf, snake_tail, snake_head, fruit):
         x_r = x * CELL_SIDE
         y_r = y * CELL_SIDE
         if x + 1 == x_0 and y == y_0:
-            pygame.draw.rect(surf, BLUE, (x_r + k * CELL_SIDE, y_r + k * CELL_SIDE, CELL_SIDE * (1 - 2 * k), CELL_SIDE * (1 - 2 * k)))
-            pygame.draw.rect(surf, BLUE, (x_r + CELL_SIDE * (1 - k), y_r + CELL_SIDE * k, CELL_SIDE * 2 * k, CELL_SIDE * (1 - 2 * k)))
+            pygame.draw.rect(surf, BLUE, (int(x_r + k * CELL_SIDE), int(y_r + k * CELL_SIDE), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * (1 - 2 * k))))
+            pygame.draw.rect(surf, BLUE, (int(x_r + CELL_SIDE * (1 - k)), int(y_r + CELL_SIDE * k), int(CELL_SIDE * 2 * k), int(CELL_SIDE * (1 - 2 * k))))
         elif x - 1 == x and y == y_0:
-            pygame.draw.rect(surf, BLUE, (x_r + k * CELL_SIDE, y_r + k * CELL_SIDE, CELL_SIDE * (1 - 2 * k), CELL_SIDE * (1 - 2 * k)))
-            pygame.draw.rect(surf, BLUE, (x_r - CELL_SIDE * (1 - k), y_r + CELL_SIDE * k, CELL_SIDE * 2 * k, CELL_SIDE * (1 - 2 * k)))
+            pygame.draw.rect(surf, BLUE, (int(x_r + k * CELL_SIDE), int(y_r + k * CELL_SIDE), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * (1 - 2 * k))))
+            pygame.draw.rect(surf, BLUE, (int(x_r - CELL_SIDE * (1 - k)), int(y_r + CELL_SIDE * k), int(CELL_SIDE * 2 * k), int(CELL_SIDE * (1 - 2 * k))))
         elif x == x_0 and y + 1 == y_0:
-            pygame.draw.rect(surf, BLUE, (x_r + k * CELL_SIDE, y_r + k * CELL_SIDE, CELL_SIDE * (1 - 2 * k), CELL_SIDE * (1 - 2 * k)))
-            pygame.draw.rect(surf, BLUE, (x_r + CELL_SIDE * k, y_r + CELL_SIDE * (1 - k), CELL_SIDE * (1 - 2 * k)), CELL_SIDE * 2 * k)
+            pygame.draw.rect(surf, BLUE, (int(x_r + k * CELL_SIDE), int(y_r + k * CELL_SIDE), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * (1 - 2 * k))))
+            pygame.draw.rect(surf, BLUE, (int(x_r + CELL_SIDE * k), int(y_r + CELL_SIDE * (1 - k)), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * 2 * k)))
         elif x == x_0 and y - 1 == y_0:
-            pygame.draw.rect(surf, BLUE, (x_r + k * CELL_SIDE, y_r + k * CELL_SIDE, CELL_SIDE * (1 - 2 * k), CELL_SIDE * (1 - 2 * k)))
-            pygame.draw.rect(surf, BLUE, (x_r + CELL_SIDE * k, y_r - CELL_SIDE * (1 - k), CELL_SIDE * (1 - 2 * k)), CELL_SIDE * 2 * k)
+            pygame.draw.rect(surf, BLUE, (int(x_r + k * CELL_SIDE), int(y_r + k * CELL_SIDE), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * (1 - 2 * k))))
+            pygame.draw.rect(surf, BLUE, (int(x_r + CELL_SIDE * k), int(y_r - CELL_SIDE * (1 - k)), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * 2 * k)))
         (x_0, y_0) = (x, y)
     (x_0, y_0) = snake_head
     pygame.draw.rect(surf, BLUE, (x_0 * CELL_SIDE, y_0 * CELL_SIDE, CELL_SIDE, CELL_SIDE))
