@@ -15,11 +15,12 @@ class Snake():
         pass
 
     def rot_right(self):
-        pass
+        Vx, Vy = self.speed
+        self.speed = (-Vy, Vx)
 
     def rot_left(self):
-        pass
-
+        Vx, Vy = self.speed
+        self.speed = (Vy, -Vx)
 
 if __name__ == "__main__":
     print("This is not main file")

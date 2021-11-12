@@ -14,8 +14,12 @@ TEXT_FONT = "arial"
 WIDTH = 1500
 HEIGHT = 800
 
+BAR_HEIGHT = 50
+CELL_SIDE = 30
+
 FPS = 30
 TIME_STEP = 200
+GAME_RUNNING = True
 
 class Cell(Enum):
     Empty = 0
