@@ -56,7 +56,7 @@ def draw_start_menu(buttons):
     """
     pass
 
-def draw_field(surf, snake_tail, snake_head, fruit):
+def draw_field(surf, snake_tail, snake_head, fruit, step):
     """ Функция рисует поле.
     Первоначльно она должна нарисовать темное поле
     Исходя из массива надо нарисовать квадратики в клеточках: 
@@ -75,26 +75,29 @@ def draw_field(surf, snake_tail, snake_head, fruit):
     pygame.draw.rect(surf, RED, (x_0, y_0, CELL_SIDE, CELL_SIDE))
     k = 0.5 * (1 - WIDTH_OF_TAIL)
     (x_0, y_0) = snake_head
-    pygame.draw.rect(surf, BLUE, (x_0, y_0, CELL_SIDE, CELL_SIDE))
-    for i in range(len(snake_tail)):
-        (x, y) = snake_tail[i]
-        x_r = x * CELL_SIDE
-        y_r = y * CELL_SIDE
-        if x + 1 == x_0 and y == y_0:
-            pygame.draw.rect(surf, BLUE, (int(x_r + k * CELL_SIDE), int(y_r + k * CELL_SIDE), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * (1 - 2 * k))))
-            pygame.draw.rect(surf, BLUE, (int(x_r + CELL_SIDE * (1 - k)), int(y_r + CELL_SIDE * k), int(CELL_SIDE * 2 * k), int(CELL_SIDE * (1 - 2 * k))))
-        elif x - 1 == x and y == y_0:
-            pygame.draw.rect(surf, BLUE, (int(x_r + k * CELL_SIDE), int(y_r + k * CELL_SIDE), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * (1 - 2 * k))))
-            pygame.draw.rect(surf, BLUE, (int(x_r - CELL_SIDE * (1 - k)), int(y_r + CELL_SIDE * k), int(CELL_SIDE * 2 * k), int(CELL_SIDE * (1 - 2 * k))))
-        elif x == x_0 and y + 1 == y_0:
-            pygame.draw.rect(surf, BLUE, (int(x_r + k * CELL_SIDE), int(y_r + k * CELL_SIDE), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * (1 - 2 * k))))
-            pygame.draw.rect(surf, BLUE, (int(x_r + CELL_SIDE * k), int(y_r + CELL_SIDE * (1 - k)), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * 2 * k)))
-        elif x == x_0 and y - 1 == y_0:
-            pygame.draw.rect(surf, BLUE, (int(x_r + k * CELL_SIDE), int(y_r + k * CELL_SIDE), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * (1 - 2 * k))))
-            pygame.draw.rect(surf, BLUE, (int(x_r + CELL_SIDE * k), int(y_r - CELL_SIDE * (1 - k)), int(CELL_SIDE * (1 - 2 * k)), int(CELL_SIDE * 2 * k)))
+    (x, y) = snake_tail[-1]
+    x_0 += step / FRAMES_PER_STEP * (x_0 - x)
+    y_0 += step / FRAMES_PER_STEP * (y_0 - y)
+    pygame.draw.rect(surf, BLUE, (int(x_0 * CELL_SIDE), int(y_0 * CELL_SIDE), CELL_SIDE, CELL_SIDE))
+    for i in range(len(snake_tail)-1):
+        (x, y) = snake_tail[-i-1]
+        pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
+            int((min(x, x_0) + k) * CELL_SIDE),
+            int((min(y, y_0) + k) * CELL_SIDE),
+            int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
+            int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
+            ))
+
         (x_0, y_0) = (x, y)
-    (x_0, y_0) = snake_head
-    pygame.draw.rect(surf, BLUE, (x_0 * CELL_SIDE, y_0 * CELL_SIDE, CELL_SIDE, CELL_SIDE))
+    (x, y) = snake_tail[0]
+    x += step / FRAMES_PER_STEP * (x_0 - x)
+    y += step / FRAMES_PER_STEP * (y_0 - y)
+    pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
+        int((min(x, x_0) + k) * CELL_SIDE),
+        int((min(y, y_0) + k) * CELL_SIDE),
+        int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
+        int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
+        ))
     return surf
 
 def draw_interface(surf, score):

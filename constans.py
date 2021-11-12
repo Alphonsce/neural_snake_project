@@ -9,6 +9,7 @@ BLACK = (0, 0, 0)
 YELLOW = (255, 255, 0)
 ORANGE = 0xBE5504
 DARK_ORANGE = 0x7A3803
+SNAKE_COLORS = [BLUE, GREEN, YELLOW]
 
 # Стиль текста
 TEXT_FONT = "arial"
@@ -24,7 +25,8 @@ FIELD_SIZE_W = int((WIDTH) // CELL_SIDE)
 FIELD_SIZE_H = int((HEIGHT - BAR_HEIGHT) // CELL_SIDE)
 
 FPS = 30
-TIME_STEP = 200
+FRAMES_PER_STEP = 5
+
 
 
 class Cell(Enum):
