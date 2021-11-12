@@ -52,7 +52,7 @@ class Snake():
                         self.gamefield.new_fruit()
                     self.tail.append(self.head)
                     self.head = (x + Vx, y + Vy)
-                    if self.new_speed != (-Vx, Vy):
+                    if self.new_speed != (-Vx, -Vy):
                         self.speed = self.new_speed
                 
     def up(self):
