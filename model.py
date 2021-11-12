@@ -2,7 +2,7 @@ from constans import *
 import random
 
 
-class Fruit():
+class Fruit:
     def __init__(self, snakepose, snakehead):
         not_founded = True
         while not_founded:
@@ -17,7 +17,7 @@ class Fruit():
     def get_pos(self):
         return self.pos
 
-class Snake():
+class Snake:
     def __init__(self, x, y, gamefield):
         self.tail = [(x-1, y), (x-2, y)]
         self.head = (x, y)
@@ -37,7 +37,7 @@ class Snake():
             self.step = 0
             x, y = self.head 
             Vx, Vy = self.speed
-            if not( 0 <= (x + Vx) < FIELD_SIZE_W and 0 <= (y + Vy) < FIELD_SIZE_H):
+            if not(0 <= (x + Vx) < FIELD_SIZE_W and 0 <= (y + Vy) < FIELD_SIZE_H):
                 self.speed = (0, 0)
                 self.alive = False
             else:

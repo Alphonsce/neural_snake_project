@@ -8,7 +8,7 @@ from graphics import *
 from constans import *
 
 
-class Game_field():
+class Game_field:
     def __init__(self, x):
         self.score = 0
         self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self)
@@ -43,7 +43,7 @@ class Game_field():
         self.snake.right()
 
 
-class Game():
+class Game:
     def __init__(self):
         self.clock = pygame.time.Clock()
         self.display = pygame.display.set_mode((2 * WIDTH, HEIGHT))
@@ -57,7 +57,7 @@ class Game():
         self.game_fields = []
         self.display = pygame.display.set_mode((len(fields) * WIDTH, HEIGHT))
         for i in range(len(fields)):
-            game_field = Game_field(i*WIDTH)
+            game_field = Game_field(i * WIDTH)
             self.game_fields.append(game_field)
             if fields[i] == "gamer":
                 self.gamer = game_field
