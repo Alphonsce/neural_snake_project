@@ -10,15 +10,16 @@
 - pandas
 - scikit-learn
 - numpy
-- TensorFlow (keras)
 - pygame
 
 Игра представляет из себя классическую игру змейка.
 Игра предполагет разделение на модули:
 - snake.py 
 - graphics.py
-- model.py
-- neural_snake.ipynb
-- exported_trained_neural_network.pkl
+- model.ipynb
+- agent.ipynb
+- neural_snake.py
 
-В ноутбуке neural_snake происходит обучение нейронной сети, затем она экспортируется в другую папку
+В ноутбуке model происходит обучение модели.
+
+Модель будет реализована при помощи алгоритма Deep Q learning.
