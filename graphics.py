@@ -69,7 +69,32 @@ def draw_field(surf, snake_tail, snake_head, fruit):
     Также для каждой части змеи надо сделать соединение между двумя клеточками -
     Салатовая, например(занимает 80% ширины или высоты клетки)
     """
-
+    (x_0, y_0) = fruit
+    x_0 *= CELL_SIDE
+    y_0 *= CELL_SIDE
+    pygame.draw.rect(surf, RED, (x_0, y_0, CELL_SIDE, CELL_SIDE))
+    k = 0.5 * (1 - WIDTH_OF_TAIL)
+    (x_0, y_0) = snake_head
+    pygame.draw.rect(surf, BLUE, (x_0, y_0, CELL_SIDE, CELL_SIDE))
+    for i in range(len(snake_tail)):
+        (x, y) = snake_tail[i]
+        x_r = x * CELL_SIDE
+        y_r = y * CELL_SIDE
+        if x + 1 == x_0 and y == y_0:
+            pygame.draw.rect(surf, BLUE, (x_r + k * CELL_SIDE, y_r + k * CELL_SIDE, CELL_SIDE * (1 - 2 * k), CELL_SIDE * (1 - 2 * k)))
+            pygame.draw.rect(surf, BLUE, (x_r + CELL_SIDE * (1 - k), y_r + CELL_SIDE * k, CELL_SIDE * 2 * k, CELL_SIDE * (1 - 2 * k)))
+        elif x - 1 == x and y == y_0:
+            pygame.draw.rect(surf, BLUE, (x_r + k * CELL_SIDE, y_r + k * CELL_SIDE, CELL_SIDE * (1 - 2 * k), CELL_SIDE * (1 - 2 * k)))
+            pygame.draw.rect(surf, BLUE, (x_r - CELL_SIDE * (1 - k), y_r + CELL_SIDE * k, CELL_SIDE * 2 * k, CELL_SIDE * (1 - 2 * k)))
+        elif x == x_0 and y + 1 == y_0:
+            pygame.draw.rect(surf, BLUE, (x_r + k * CELL_SIDE, y_r + k * CELL_SIDE, CELL_SIDE * (1 - 2 * k), CELL_SIDE * (1 - 2 * k)))
+            pygame.draw.rect(surf, BLUE, (x_r + CELL_SIDE * k, y_r + CELL_SIDE * (1 - k), CELL_SIDE * (1 - 2 * k)), CELL_SIDE * 2 * k)
+        elif x == x_0 and y - 1 == y_0:
+            pygame.draw.rect(surf, BLUE, (x_r + k * CELL_SIDE, y_r + k * CELL_SIDE, CELL_SIDE * (1 - 2 * k), CELL_SIDE * (1 - 2 * k)))
+            pygame.draw.rect(surf, BLUE, (x_r + CELL_SIDE * k, y_r - CELL_SIDE * (1 - k), CELL_SIDE * (1 - 2 * k)), CELL_SIDE * 2 * k)
+        (x_0, y_0) = (x, y)
+    (x_0, y_0) = snake_head
+    pygame.draw.rect(surf, BLUE, (x_0 * CELL_SIDE, y_0 * CELL_SIDE, CELL_SIDE, CELL_SIDE))
     return surf
 
 def draw_interface(surf, score):

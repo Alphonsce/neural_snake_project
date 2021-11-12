@@ -18,6 +18,7 @@ HEIGHT = 800
 
 BAR_HEIGHT = 50
 CELL_SIDE = 30
+WIDTH_OF_TAIL = 0.8 #коэффициент уменьшения для рисовки 
 
 FIELD_SIZE_W = int((WIDTH) // CELL_SIDE)
 FIELD_SIZE_H = int((HEIGHT - BAR_HEIGHT) // CELL_SIDE)
