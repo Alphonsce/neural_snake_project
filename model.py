@@ -22,6 +22,7 @@ class Snake():
         self.tail = [(x-1, y), (x-2, y)]
         self.head = (x, y)
         self.speed = (1, 0)
+        self.new_speed = (1, 0)
         self.alive = True
         self.step = 0
         self.gamefield = gamefield
@@ -51,22 +52,20 @@ class Snake():
                         self.gamefield.new_fruit()
                     self.tail.append(self.head)
                     self.head = (x + Vx, y + Vy)
+                    if self.new_speed != (-Vx, Vy):
+                        self.speed = self.new_speed
                 
     def up(self):
-        if self.alive and self.speed != (0, 1):       
-            self.speed = (0, -1)
+        self.new_speed = (0, -1)
 
     def down(self):
-        if self.alive and self.speed != (0, -1):       
-            self.speed = (0, 1)
+        self.new_speed = (0, 1)
 
     def left(self):
-        if self.alive and self.speed != (1, 0):       
-            self.speed = (-1, 0)
+        self.new_speed = (-1, 0)
             
     def right(self):
-        if self.alive and self.speed != (-1, 0):       
-            self.speed = (1, 0)
+        self.new_speed = (1, 0)
 
     def get_pos(self):
         """ Возвращает положения частей хвоста и головы"""
