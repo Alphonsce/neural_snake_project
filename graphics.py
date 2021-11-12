@@ -12,7 +12,7 @@ class Button():
         w, h - ширина и высота кнопки
         """
         self.text = text
-        self.t = font.render(text, True, BLACK)
+        self.t = TEXT_FONT.render(text, True, BLACK)
         self.width = self.t.get_rect().width
         self.height = self.t.get_rect().height
         self.h = h
@@ -37,9 +37,9 @@ class Button():
         c = self.color
         if self.active == 1:
             c = self.act_color
-        text = font.render(self.text, True, c)
+        text = TEXT_FONT.render(self.text, True, c)
         text_rect = text.get_rect(center = (WIDTH // 2, self.h))
-        screen.blit(text, text_rect)
+        return text, text_rect
 
 def draw_start_menu(buttons):
     """ На стартовом экране Не должно быть видно будущего поля.
@@ -69,7 +69,7 @@ def draw_field(cells, surf):
     Также для каждой части змеи надо сделать соединение между двумя клеточками -
     Салатовая, например(занимает 80% ширины или высоты клетки)
     """
-    
+
     return surf
 
 def draw_interface():
