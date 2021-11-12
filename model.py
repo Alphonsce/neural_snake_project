@@ -39,7 +39,6 @@ class Snake():
             if not( 0 <= (x + Vx) < FIELD_SIZE_W and 0 <= (y + Vy) < FIELD_SIZE_H):
                 self.speed = (0, 0)
                 self.alive = False
-                print(x, y)
             else:
                 for part in self.tail[1:]:
                     if part == (x + Vx, y + Vy):
@@ -52,7 +51,6 @@ class Snake():
                         self.gamefield.new_fruit()
                     self.tail.append(self.head)
                     self.head = (x + Vx, y + Vy)
-            print(self.tail)
                 
     def up(self):
         if self.alive and self.speed != (0, 1):       
