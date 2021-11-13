@@ -23,7 +23,7 @@ class Fruit:
 
 class Snake:
     def __init__(self, x, y, gamefield):
-        self.tail = [(x-1, y), (x-2, y)]
+        self.tail = [(x - 1, y), (x - 2, y)]
         self.head = (x, y)
         self.speed = (1, 0)
         self.new_speed = (1, 0)
@@ -31,9 +31,9 @@ class Snake:
         self.step = 0
         self.gamefield = gamefield
 
-    def move(self, fruit):
+    def move(self, fruit_coords):
         """ Отвечает за перемещение змеи
-        fruit - положение фрукта на поле
+        fruit_coords - положение фрукта на поле
         """
         if self.alive:
             self.step += 1
@@ -50,7 +50,7 @@ class Snake:
                         self.speed = (0, 0)
                         self.alive = False
                 if self.alive:
-                    if fruit != (x + Vx, y + Vy):
+                    if fruit_coords != (x + Vx, y + Vy):
                         self.tail.pop(0)
                     else:
                         self.gamefield.new_fruit()
@@ -123,26 +123,6 @@ def draw_field(surf, snake_tail, snake_head, fruit, step):
         ))
     return surf
 
-def draw_interface(surf, score):
-    """ Полоса в верху экрана, на которой выводится счет"""
-    pass #FIXME
-    return surf
-
-def draw_text(text, size, x, y, colour, surf):
-    """ Функция располагает текст на заданном холсте
-    ОПОРНОЙ ТОЧКОЙ ЯВЛЯЕТСЯ СЕРЕДИНА ВЕРХА ТЕКСТА
-    text: строка, вывод которой предполагается
-    size: размер шрифта в пикселях
-    x, y: положение опорной точки текста
-    colour: цвет текста
-    surf: холст, на который пишется
-    """
-    font = pygame.font.SysFont(TEXT_FONT, size)
-    text_surface = font.render(text, True, colour)
-    text_rect = text_surface.get_rect()
-    text_rect.midtop = (x, y)
-    surf.blit(text_surface, text_rect)
-
 
 class Game_field:
     def __init__(self, x):
@@ -161,7 +141,6 @@ class Game_field:
             self.fruit.get_pos(), self.snake.get_step()
             ), (0, 0))
         self.interf.fill((0, 0, 0))
-        self.interf.blit(draw_interface(self.interf, self.score), (0, 0))
 
     def new_fruit(self):
         self.fruit = Fruit(*self.snake.get_pos())

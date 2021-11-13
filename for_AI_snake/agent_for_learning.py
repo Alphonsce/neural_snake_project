@@ -3,6 +3,7 @@ import numpy as np
 import random
 from collections import deque
 from AI_snake import Game_field, Game
+import training_model
 
 
 MAX_MEMORY = 100_000
