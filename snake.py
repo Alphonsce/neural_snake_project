@@ -24,7 +24,7 @@ class Game_field:
             self.screen, *self.snake.get_pos(), 
             self.fruit.get_pos(), self.snake.get_step()
             ), (0, 0))
-        self.interf.fill((0, 0, 0))
+        self.interf.fill((90, 90, 90))
         self.interf.blit(draw_interface(self.interf, self.score), (0, 0))
 
     def new_fruit(self):
@@ -46,7 +46,7 @@ class Game_field:
 class Game:
     def __init__(self):
         self.clock = pygame.time.Clock()
-        self.display = pygame.display.set_mode((2 * WIDTH, HEIGHT))
+        self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.GAME_RUNNING = True
 
     def start_menu(self):
@@ -79,6 +79,7 @@ class Game:
     def mainloop(self, fields):
         self.gamer = None
         self.game_fields = []
+        pygame.display.quit()
         self.display = pygame.display.set_mode((len(fields) * WIDTH, HEIGHT))
         for i in range(len(fields)):
             game_field = Game_field(i * WIDTH)
