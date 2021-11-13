@@ -23,49 +23,49 @@ class Button():
         self.text_rect = self.t.get_rect(center=(WIDTH // 2, self.h))
 
     def check_pressed(self, x, y):
-        """ Функция проверяет попадает ли мышь 
-        в прямоугольник данной кнопки"""
-        if abs(WIDTH // 2 - x) <= self.width / 2 and abs(self.h - y) < self.height / 2:
+        """ Функция проверяет попадает ли мышь в прямоугольник 
+        данной кнопки и возвращает соответствующее булевое значение"""
+        if (abs(WIDTH // 2 - x) <= self.width / 2 and
+            abs(self.h - y) < self.height / 2
+            ):
             self.active = 1
         else:
             self.active = 0
         return self.active
 
-    def draw_button(self):
-        """ Отрисовывает кнопку
+    def draw_button(self, surf: pygame.Surface):
+        """ Отрисовывает кнопку на данном surf 
+        По собственным координатам
         Должна менять цвет или выделяться при наведении"""
         c = self.color
         if self.active == 1:
             c = self.act_color
-        text = TEXT_FONT.render(self.text, True, c)
+        font = pygame.font.SysFont(TEXT_FONT, 50)
+        text = font.render(self.text, True, c)
         text_rect = text.get_rect(center = (WIDTH // 2, self.h))
         return text, text_rect
 
 def draw_start_menu(buttons):
     """ На стартовом экране Не должно быть видно будущего поля.
     На дисплей должно выводиться Меню с кнопками типа Button:
-    SINGLE PLAYER
-    PLAYER VS AI
-    JUST AI
-    STATICS
-    EXIT
-
     Эти кнопки лежат в массиве buttons
     На задний план потом можно наложить принтскрин из игры
     Меню неподвижно, так что достаточно сделать правильную реализацию
     """
-    pass
+    pass #FIXME
 
 def draw_field(surf, snake_tail, snake_head, fruit, step):
     """ Функция рисует поле.
     Первоначльно она должна нарисовать темное поле
     Исходя из массива надо нарисовать квадратики в клеточках: 
     surf - Поле на котором надо нарисовать.
-    cells - массив чисел. Соответствия устанавливаются с помощью 
-    класса Cell в модуле constans
+    snake_tail - массив координат частей хвоста
+    snake_head - координаты головы
+    fruit - координаты фрукта
+    step - номер шага змеи. По факту является степенью завершения змеей шага на 1 кл
     Фрукт - красный (занимает 80% ширины и высоты клетки)
-    Змея - зеленая (занимает 80% ширины и высоты клетки)
-    Голова - Зеленая (занимает 100% ширины и высоты клетки)
+    Змея - цветастая (занимает 80% ширины и высоты клетки)
+    Голова - Синяя (занимает 100% ширины и высоты клетки)
     Также для каждой части змеи надо сделать соединение между двумя клеточками -
     Салатовая, например(занимает 80% ширины или высоты клетки)
     """
@@ -87,12 +87,11 @@ def draw_field(surf, snake_tail, snake_head, fruit, step):
             int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
             int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
             ))
-
         (x_0, y_0) = (x, y)
     (x, y) = snake_tail[0]
     x += step / FRAMES_PER_STEP * (x_0 - x)
     y += step / FRAMES_PER_STEP * (y_0 - y)
-    pygame.draw.rect(surf, SNAKE_COLORS[len(snake_tail) % len(SNAKE_COLORS)], (
+    pygame.draw.rect(surf, SNAKE_COLORS[(len(snake_tail) - 1) % len(SNAKE_COLORS)], (
         int((min(x, x_0) + k) * CELL_SIDE),
         int((min(y, y_0) + k) * CELL_SIDE),
         int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
@@ -101,7 +100,10 @@ def draw_field(surf, snake_tail, snake_head, fruit, step):
     return surf
 
 def draw_interface(surf, score):
-    """ Полоса в верху экрана, на которой выводится счет"""
+    """ Полоса в верху экрана, на которой выводится счет
+    score - счет
+    Возващает холст на котрый добавлен счет
+    """
     pass #FIXME
     return surf
 
