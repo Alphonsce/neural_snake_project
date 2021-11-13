@@ -14,45 +14,49 @@ class Button():
         self.text = text
         font = pygame.font.SysFont(TEXT_FONT, 50)
         self.t = font.render(text, True, BLACK)
-        self.width = self.t.get_rect().width
-        self.height = self.t.get_rect().height
-        self.h = h
+        self.width = w
+        self.height = h
+        self.x = x
+        self.y = y
         self.active = 0
         self.color = ORANGE
         self.act_color = DARK_ORANGE
-        self.text_rect = self.t.get_rect(center=(WIDTH // 2, self.h))
+        self.surf = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
 
     def check_pressed(self, x, y):
         """ Функция проверяет попадает ли мышь в прямоугольник 
         данной кнопки и возвращает соответствующее булевое значение"""
-        if (abs(WIDTH // 2 - x) <= self.width / 2 and
-            abs(self.h - y) < self.height / 2
+        if (abs(self.x - x) <= 0.5 * self.width and
+            abs(self.y - y) <= 0.5 * self.height
             ):
-            self.active = 1
+            self.active = True
         else:
-            self.active = 0
+            self.active = False
         return self.active
 
-    def draw_button(self, surf: pygame.Surface):
+    def draw_button(self, display):
         """ Отрисовывает кнопку на данном surf 
         По собственным координатам
         Должна менять цвет или выделяться при наведении"""
-        c = self.color
-        if self.active == 1:
-            c = self.act_color
-        font = pygame.font.SysFont(TEXT_FONT, 50)
-        text = font.render(self.text, True, c)
-        text_rect = text.get_rect(center = (WIDTH // 2, self.h))
-        return text, text_rect
+        col = self.color
+        if self.active:
+            col = self.act_color
+        text = self.t
+        rect = text.get_rect()
+        pygame.draw.rect(display, col, (self.x - 0.5 * self.width, self.y - 0.5 * self.height, self.width, self.height))
+        display.blit(text, (self.x - 0.5 * rect.width, self.y - 0.5 * rect.height))
 
-def draw_start_menu(buttons):
+def draw_start_menu(buttons, display):
     """ На стартовом экране Не должно быть видно будущего поля.
     На дисплей должно выводиться Меню с кнопками типа Button:
     Эти кнопки лежат в массиве buttons
     На задний план потом можно наложить принтскрин из игры
     Меню неподвижно, так что достаточно сделать правильную реализацию
     """
-    pass #FIXME
+    for button in buttons:
+        #display.blit(button.draw_button(), (button.x - 0.5 * button.width, button.y - 0.5 * button.height))
+        button.draw_button(display)
+    #pass
 
 def draw_field(surf, snake_tail, snake_head, fruit, step):
     """ Функция рисует поле.
