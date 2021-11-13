@@ -9,7 +9,11 @@ from constans import *
 
 
 class Game_field:
+    """ Собственно само независимое игровое поле"""
     def __init__(self, x):
+        """ При инициализации полю сразу передается координата 
+        по которой будет данное поле выводиться на экран
+        """
         self.score = 0
         self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self)
         self.fruit = Fruit(*self.snake.get_pos())
@@ -18,6 +22,7 @@ class Game_field:
         self.x = x
 
     def update(self):
+        """ Обновление состояния поля """
         self.snake.move(self.fruit.get_pos())
         self.screen.fill((0, 0, 0))
         self.screen.blit(draw_field(
@@ -28,28 +33,39 @@ class Game_field:
         self.interf.blit(draw_interface(self.interf, self.score), (0, 0))
 
     def new_fruit(self):
+        """ Создание нового фрукта для данного поля"""
         self.fruit = Fruit(*self.snake.get_pos())
 
     def snake_down(self):
+        """ На данном поле змея получает приказ повернуть вниз"""
         self.snake.down()
 
     def snake_up(self):
+        """ На данном поле змея получает приказ повернуть вверх"""
         self.snake.up()
 
     def snake_left(self):
+        """ На данном поле змея получает приказ повернуть налево"""
         self.snake.left()
 
     def snake_right(self):
+        """ На данном поле змея получает приказ повернуть направо"""
         self.snake.right()
 
-
 class Game:
+    """ Объект типа игра отвечает за дисплей и циклы игры
+    Также отвечает за ввод и распределение гейммодов
+    """
     def __init__(self):
+        """ Создание объекта типа игра"""
         self.clock = pygame.time.Clock()
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.GAME_RUNNING = True
 
     def start_menu(self):
+        """ Стартовое меню отвечает за выбор и распределение игровых модов """
+        pygame.display.quit()
+        self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.menu = True
         menu_buttons = []
         menu_buttons.append(Button("Player only", 200, 300, 200, 50))
@@ -76,7 +92,13 @@ class Game:
             draw_start_menu(menu_buttons)
             pygame.display.flip()
 
-    def mainloop(self, fields):
+    def mainloop(self, fields: list):
+        """ Основной цикл игры.
+        На вход подается модель запускаемой игры.
+        В fields передается тип игроков
+        "gamer" - человек-игрок
+        "AI" - искусственный интелект
+        """
         self.gamer = None
         self.game_fields = []
         pygame.display.quit()
@@ -97,6 +119,9 @@ class Game:
             pygame.display.flip()
 
     def keys_loop(self):
+        """ Контроллер. Отвечает за взаимодействие человека с игрой
+        Функция выделена из mainloop для уменьшения длины текста при чтении
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.GAME_RUNNING = False 
@@ -113,6 +138,8 @@ class Game:
                             if eventpause.type == pygame.QUIT:
                                 self.GAME_RUNNING = False 
                                 pause = False
+                if event.key == pygame.K_ESCAPE:
+                    self.start_menu()
                 if self.gamer != None:
                     if event.key == pygame.K_UP:
                         self.gamer.snake_up()
@@ -124,6 +151,7 @@ class Game:
                         self.gamer.snake_right()
 
     def keys_menu(self):
+        """ Контроллер для стартового меню. """
         click = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
