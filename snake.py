@@ -35,6 +35,7 @@ class Game_field:
     def new_fruit(self):
         """ Создание нового фрукта для данного поля"""
         self.fruit = Fruit(*self.snake.get_pos())
+        self.score += 5
 
     def snake_down(self):
         """ На данном поле змея получает приказ повернуть вниз"""
@@ -68,10 +69,10 @@ class Game:
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.menu = True
         menu_buttons = []
-        menu_buttons.append(Button("Player only", 200, 300, 200, 50))
-        menu_buttons.append(Button("AI only", 200, 400, 200, 50))
-        menu_buttons.append(Button("AI VS Player", 200, 500, 200, 50))
-        menu_buttons.append(Button("EXIT", 200, 600, 200, 50))
+        menu_buttons.append(Button("Player only", WIDTH // 2, 300, 200, 50))
+        menu_buttons.append(Button("AI only",  WIDTH // 2, 400, 200, 50))
+        menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 500, 200, 50))
+        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 600, 200, 50))
         while self.menu:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
@@ -79,7 +80,6 @@ class Game:
             click = self.keys_menu()
             for i in range(len(menu_buttons)):
                 if menu_buttons[i].check_pressed(x, y) and click:
-                    print(0)
                     self.menu = False
                     if i == 0:
                         self.mainloop(["gamer"])

@@ -3,7 +3,13 @@ import random
 
 
 class Fruit:
+    """ Тип фрукта"""
     def __init__(self, snakepose, snakehead):
+        """ Создание фрукта перебором возможных координат
+        на вход подаются 
+        snakepose - координаты частей хвоста
+        snakehead - координаты головы
+        """
         not_founded = True
         while not_founded:
             not_founded = False
@@ -15,11 +21,17 @@ class Fruit:
                 not_founded = True
     
     def get_pos(self):
+        """ Функция возвращает положение фрукта"""
         return self.pos
 
 class Snake:
+    """ Класс змея. Является основным игроком"""
     def __init__(self, x, y, gamefield):
-        self.tail = [(x-1, y), (x-2, y)]
+        """ Создание змеи 
+        x, y - начальные координаты головы 
+        gamefield - игровое поле, в котором змейка перемещается
+        """
+        self.tail = [(x-1, y)]
         self.head = (x, y)
         self.speed = (1, 0)
         self.new_speed = (1, 0)
@@ -56,15 +68,19 @@ class Snake:
                         self.speed = self.new_speed
                 
     def up(self):
+        """ Попытка поворта наверх"""
         self.new_speed = (0, -1)
 
     def down(self):
+        """ Попытка поворта вниз"""
         self.new_speed = (0, 1)
 
     def left(self):
+        """ Попытка поворта налево"""
         self.new_speed = (-1, 0)
             
     def right(self):
+        """ Попытка поворта направо"""
         self.new_speed = (1, 0)
 
     def get_pos(self):
@@ -72,6 +88,7 @@ class Snake:
         return (self.tail, self.head)
 
     def get_step(self):
+        """ Возвращает степень законченности перехода"""
         return self.step
 
 
