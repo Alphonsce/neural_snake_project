@@ -50,7 +50,31 @@ class Game:
         self.GAME_RUNNING = True
 
     def start_menu(self):
-        self.mainloop(["gamer"])
+        self.menu = True
+        menu_buttons = []
+        menu_buttons.append(Button("Player only", 200, 300, 200, 50))
+        menu_buttons.append(Button("AI only", 200, 400, 200, 50))
+        menu_buttons.append(Button("AI VS Player", 200, 500, 200, 50))
+        menu_buttons.append(Button("EXIT", 200, 600, 200, 50))
+        while self.menu:
+            x, y = pygame.mouse.get_pos()
+            self.clock.tick(FPS)
+            self.display.fill((0, 0, 0))
+            click = self.keys_menu()
+            for i in range(len(menu_buttons)):
+                if menu_buttons[i].check_pressed(x, y) and click:
+                    print(0)
+                    self.menu = False
+                    if i == 0:
+                        self.mainloop(["gamer"])
+                    if i == 1:
+                        self.mainloop(["AI"])
+                    if i == 2:
+                        self.mainloop(["AI", "gamer"])
+                    if i == 3:
+                        self.GAME_RUNNING = False   
+            draw_start_menu(menu_buttons)
+            pygame.display.flip()
 
     def mainloop(self, fields):
         self.gamer = None
@@ -75,6 +99,7 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.GAME_RUNNING = False 
+                self.menu = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     pause = True
@@ -96,6 +121,17 @@ class Game:
                         self.gamer.snake_left()                        
                     if event.key == pygame.K_RIGHT:
                         self.gamer.snake_right()
+
+    def keys_menu(self):
+        click = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.GAME_RUNNING = False 
+                self.menu = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+        return click
 
 
 def main():
