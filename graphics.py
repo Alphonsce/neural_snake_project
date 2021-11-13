@@ -12,7 +12,8 @@ class Button():
         w, h - ширина и высота кнопки
         """
         self.text = text
-        self.t = TEXT_FONT.render(text, True, BLACK)
+        font = pygame.font.SysFont(TEXT_FONT, 50)
+        self.t = font.render(text, True, BLACK)
         self.width = self.t.get_rect().width
         self.height = self.t.get_rect().height
         self.h = h
@@ -20,16 +21,15 @@ class Button():
         self.color = ORANGE
         self.act_color = DARK_ORANGE
         self.text_rect = self.t.get_rect(center=(WIDTH // 2, self.h))
-        print(self.width, self.height) 
 
     def check_pressed(self, x, y):
         """ Функция проверяет попадает ли мышь 
         в прямоугольник данной кнопки"""
-        x, y = pygame.mouse.get_pos()
-        if abs(WIDTH // 2 - x) <= self.width / 2 and np.abs(self.h - y) < self.height / 2:
+        if abs(WIDTH // 2 - x) <= self.width / 2 and abs(self.h - y) < self.height / 2:
             self.active = 1
         else:
             self.active = 0
+        return self.active
 
     def draw_button(self):
         """ Отрисовывает кнопку
