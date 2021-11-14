@@ -4,6 +4,9 @@ import pygame
 from enum import Enum
 from collections import namedtuple
 import random
+from human_snake import draw_field
+
+# вместо is_collision я могу использовать game_field.snake.alive
 
 
 class Fruit:
@@ -79,59 +82,17 @@ class Snake:
         return self.step
 
 
-def draw_field(surf, snake_tail, snake_head, fruit, step):
-    """ Функция рисует поле.
-    Первоначльно она должна нарисовать темное поле
-    Исходя из массива надо нарисовать квадратики в клеточках: 
-    surf - Поле на котором надо нарисовать.
-    cells - массив чисел. Соответствия устанавливаются с помощью 
-    класса Cell в модуле constans
-    Фрукт - красный (занимает 80% ширины и высоты клетки)
-    Змея - зеленая (занимает 80% ширины и высоты клетки)
-    Голова - Зеленая (занимает 100% ширины и высоты клетки)
-    Также для каждой части змеи надо сделать соединение между двумя клеточками -
-    Салатовая, например(занимает 80% ширины или высоты клетки)
-    """
-    (x_0, y_0) = fruit
-    x_0 *= CELL_SIDE
-    y_0 *= CELL_SIDE
-    pygame.draw.rect(surf, RED, (x_0, y_0, CELL_SIDE, CELL_SIDE))
-    k = 0.5 * (1 - WIDTH_OF_TAIL)
-    (x_0, y_0) = snake_head
-    (x, y) = snake_tail[-1]
-    x_0 += step / FRAMES_PER_STEP * (x_0 - x)
-    y_0 += step / FRAMES_PER_STEP * (y_0 - y)
-    pygame.draw.rect(surf, BLUE, (int(x_0 * CELL_SIDE), int(y_0 * CELL_SIDE), CELL_SIDE, CELL_SIDE))
-    for i in range(len(snake_tail) - 1):
-        (x, y) = snake_tail[-i - 1]
-        pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
-            int((min(x, x_0) + k) * CELL_SIDE),
-            int((min(y, y_0) + k) * CELL_SIDE),
-            int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
-            int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
-            ))
-
-        (x_0, y_0) = (x, y)
-    (x, y) = snake_tail[0]
-    x += step / FRAMES_PER_STEP * (x_0 - x)
-    y += step / FRAMES_PER_STEP * (y_0 - y)
-    pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
-        int((min(x, x_0) + k) * CELL_SIDE),
-        int((min(y, y_0) + k) * CELL_SIDE),
-        int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
-        int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
-        ))
-    return surf
-
-
-class Game_field:
-    def __init__(self, x):
+class Game:
+    def __init__(self):
+        self.clock = pygame.time.Clock()
+        self.display = pygame.display.set_mode((2 * WIDTH, HEIGHT))
+        self.GAME_RUNNING = True
+        # field init:
         self.score = 0
         self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self)
         self.fruit = Fruit(*self.snake.get_pos())
         self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
         self.interf = pygame.Surface((WIDTH, BAR_HEIGHT))
-        self.x = x
 
     def update(self):
         self.snake.move(self.fruit.get_pos())
@@ -157,64 +118,36 @@ class Game_field:
     def snake_right(self):
         self.snake.right()
 
-
-class Game:
-    def __init__(self):
-        self.clock = pygame.time.Clock()
-        self.display = pygame.display.set_mode((2 * WIDTH, HEIGHT))
-        self.GAME_RUNNING = True
-
-    def start_menu(self):
-        self.mainloop(["gamer"])
-
     def mainloop(self, fields):
-        self.gamer = None
-        self.game_fields = []
         self.display = pygame.display.set_mode((len(fields) * WIDTH, HEIGHT))
-        for i in range(len(fields)):
-            game_field = Game_field(i * WIDTH)
-            self.game_fields.append(game_field)
-            if fields[i] == "gamer":
-                self.gamer = game_field
+
         while self.GAME_RUNNING:
+            #print(game_field.snake.head)
             self.clock.tick(FPS)
             self.display.fill((0, 0, 0))
             self.keys_loop()
-            for field in self.game_fields:
-                field.update()
-                self.display.blit(field.screen, (field.x, BAR_HEIGHT))
-                self.display.blit(field.interf, (field.x, 0))
+            self.update()
+            self.display.blit(self.screen, (0, BAR_HEIGHT))
+            self.display.blit(self.interf, (0, 0))
             pygame.display.flip()
 
     def keys_loop(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.GAME_RUNNING = False 
+            # для теста:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
-                    pause = True
-                    while pause:
-                        self.clock.tick(FPS)
-                        for eventpause in pygame.event.get():
-                            if eventpause.type == pygame.KEYDOWN:
-                                if eventpause.key == pygame.K_p:
-                                    pause = False
-                            if eventpause.type == pygame.QUIT:
-                                self.GAME_RUNNING = False 
-                                pause = False
-                if self.gamer != None:
-                    if event.key == pygame.K_UP:
-                        self.gamer.snake_up()
-                    if event.key == pygame.K_DOWN:
-                        self.gamer.snake_down()
-                    if event.key == pygame.K_LEFT:
-                        self.gamer.snake_left()                        
-                    if event.key == pygame.K_RIGHT:
-                        self.gamer.snake_right()
-
+                if event.key == pygame.K_UP:
+                    self.snake_up()
+                if event.key == pygame.K_DOWN:
+                    self.snake_down()
+                if event.key == pygame.K_LEFT:
+                    self.snake_left()                        
+                if event.key == pygame.K_RIGHT:
+                    self.snake_right()
 
 def main():
-    Game().start_menu()
+    Game().mainloop(["AI"])
 
 if __name__ == "__main__":
     pygame.init()
