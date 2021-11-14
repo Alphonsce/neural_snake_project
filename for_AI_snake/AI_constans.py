@@ -11,24 +11,26 @@ ORANGE = 0xBE5504
 DARK_ORANGE = 0x7A3803
 SNAKE_COLORS = [BLUE, GREEN, YELLOW]
 
-# Стиль текста
-TEXT_FONT = "arial"
+TEXT_FONT = "arial" # Стиль текста
 
-WIDTH = 750
+# параметры игрового поля. Изменение не рекомендованно
+WIDTH = 750 
 HEIGHT = 800
-
 BAR_HEIGHT = 50
 CELL_SIDE = 30
-WIDTH_OF_TAIL = 0.8 #коэффициент уменьшения для рисовки хвоста
-
+# ширина и высота игрового поля в клеточках
 FIELD_SIZE_W = int((WIDTH) // CELL_SIDE)
 FIELD_SIZE_H = int((HEIGHT - BAR_HEIGHT) // CELL_SIDE)
 
+WIDTH_OF_TAIL = 0.8 #коэффициент толщины для рисовки хвоста
+ 
+#Количество обработок в секунду
 FPS = 30
-FRAMES_PER_STEP = 5
+# По факту задает скорость змеи. V * FRAMES_PER_STEP = FPS
+FRAMES_PER_STEP = 3
 
 
-
+# Пока что не используемый нами блок
 class Cell(Enum):
     Empty = 0
     Snake = 1
