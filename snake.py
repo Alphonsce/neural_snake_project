@@ -116,6 +116,7 @@ class Game:
                 field.update()
                 self.display.blit(field.screen, (field.x, BAR_HEIGHT))
                 self.display.blit(field.interf, (field.x, 0))
+                pygame.draw.rect(self.display, (90, 90, 90), [field.x, 0, 0, HEIGHT], 1)
             pygame.display.flip()
 
     def keys_loop(self):
