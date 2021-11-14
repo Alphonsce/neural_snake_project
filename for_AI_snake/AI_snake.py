@@ -44,6 +44,7 @@ class Snake:
             Direction.UP: (0, -1)
             }
         self.direction = Direction.RIGHT
+        self.new_direction = Direction.RIGHT
 
     def move(self, fruit_coords, direction):
         """ Отвечает за перемещение змеи
@@ -71,18 +72,6 @@ class Snake:
                         self.gamefield.new_fruit()
                     self.tail.append(self.head)
                     self.head = (x + Vx, y + Vy)
-                
-    def up(self):
-        self.direction = Direction.UP
-
-    def down(self):
-        self.direction = Direction.DOWN
-
-    def left(self):
-        self.direction = Direction.LEFT
-            
-    def right(self):
-        self.direction = Direction.RIGHT
 
     def get_pos(self):
         """ Возвращает положения частей хвоста и головы"""
@@ -95,8 +84,7 @@ class Snake:
 class AI_Game:
     def __init__(self):
         self.clock = pygame.time.Clock()
-        self.display = pygame.display.set_mode((2 * WIDTH, HEIGHT))
-        self.GAME_RUNNING = True
+        self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.frame_number = 0
         # field init:
         self.score = 0
@@ -121,34 +109,30 @@ class AI_Game:
         self.fruit = Fruit(*self.snake.get_pos())
 
     def snake_down(self):
-        self.snake.down()
+        self.snake.direction = Direction.DOWN
 
     def snake_up(self):
-        self.snake.up()
+        self.snake.direction = Direction.UP
 
     def snake_left(self):
-        self.snake.left()
+        self.snake.direction = Direction.LEFT
 
     def snake_right(self):
-        self.snake.right()
+        self.snake.direction = Direction.RIGHT
 
-    def mainloop(self, fields):
-        self.display = pygame.display.set_mode((len(fields) * WIDTH, HEIGHT))
-
-        while self.GAME_RUNNING:
-            print(self.snake.direction)
-            self.clock.tick(FPS)
-            self.display.fill((0, 0, 0))
-            self.keys_loop()
-            self.update_drawing()
-            self.display.blit(self.screen, (0, BAR_HEIGHT))
-            pygame.display.flip()
-
-    def keys_loop(self):
+    def mainloop_step(self):
+        game_over = not self.snake.alive
+        print(self.snake.direction)
+        self.clock.tick(FPS)
+        self.display.fill((0, 0, 0))
+        self.update_drawing()
+        self.display.blit(self.screen, (0, BAR_HEIGHT))
+        pygame.display.flip()
         for event in pygame.event.get():
             self.frame_number += 1
-            if event.type == pygame.QUIT or not self.snake.alive:
-                self.GAME_RUNNING = False 
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
             # для теста:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
@@ -161,9 +145,10 @@ class AI_Game:
                     self.snake_right()
 
 def main():
-    AI_Game().mainloop(["AI"])
+    aigame = AI_Game()
+    while True:
+        aigame.mainloop_step()
 
 if __name__ == "__main__":
     pygame.init()
     main()
-    pygame.quit()
