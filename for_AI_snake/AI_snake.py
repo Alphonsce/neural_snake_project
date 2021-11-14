@@ -8,6 +8,11 @@ from human_snake import draw_field
 
 # вместо is_collision я могу использовать game_field.snake.alive
 
+class Direction(Enum):
+    RIGHT = 1
+    LEFT = 2
+    UP = 3
+    DOWN = 4
 
 class Fruit:
     def __init__(self, snakepose, snakehead):
@@ -29,21 +34,28 @@ class Snake:
         self.tail = [(x - 1, y), (x - 2, y)]
         self.head = (x, y)
         self.speed = (1, 0)
-        self.new_speed = (1, 0)
         self.alive = True
         self.step = 0
         self.gamefield = gamefield
+        self.speed_from_direction = {
+            Direction.RIGHT: (1, 0),
+            Direction.DOWN: (0, 1),
+            Direction.LEFT: (-1, 0),
+            Direction.UP: (0, -1)
+            }
+        self.direction = Direction.RIGHT
 
-    def move(self, fruit_coords):
+    def move(self, fruit_coords, direction):
         """ Отвечает за перемещение змеи
         fruit_coords - положение фрукта на поле
         """
+        #self.action = action
         if self.alive:
             self.step += 1
         if self.step >= FRAMES_PER_STEP:
             self.step = 0
             x, y = self.head 
-            Vx, Vy = self.speed
+            Vx, Vy = self.speed_from_direction[direction]
             if not(0 <= (x + Vx) < FIELD_SIZE_W and 0 <= (y + Vy) < FIELD_SIZE_H):
                 self.speed = (0, 0)
                 self.alive = False
@@ -59,20 +71,18 @@ class Snake:
                         self.gamefield.new_fruit()
                     self.tail.append(self.head)
                     self.head = (x + Vx, y + Vy)
-                    if self.new_speed != (-Vx, -Vy):
-                        self.speed = self.new_speed
                 
     def up(self):
-        self.new_speed = (0, -1)
+        self.direction = Direction.UP
 
     def down(self):
-        self.new_speed = (0, 1)
+        self.direction = Direction.DOWN
 
     def left(self):
-        self.new_speed = (-1, 0)
+        self.direction = Direction.LEFT
             
     def right(self):
-        self.new_speed = (1, 0)
+        self.direction = Direction.RIGHT
 
     def get_pos(self):
         """ Возвращает положения частей хвоста и головы"""
@@ -82,26 +92,30 @@ class Snake:
         return self.step
 
 
-class Game:
+class AI_Game:
     def __init__(self):
         self.clock = pygame.time.Clock()
         self.display = pygame.display.set_mode((2 * WIDTH, HEIGHT))
         self.GAME_RUNNING = True
+        self.frame_number = 0
         # field init:
         self.score = 0
         self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self)
         self.fruit = Fruit(*self.snake.get_pos())
         self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
-        self.interf = pygame.Surface((WIDTH, BAR_HEIGHT))
+        self.reset()
 
-    def update(self):
-        self.snake.move(self.fruit.get_pos())
+    def reset(self):
+        pass
+
+
+    def update_drawing(self):
+        self.snake.move(self.fruit.get_pos(), self.snake.direction)
         self.screen.fill((0, 0, 0))
         self.screen.blit(draw_field(
             self.screen, *self.snake.get_pos(), 
             self.fruit.get_pos(), self.snake.get_step()
             ), (0, 0))
-        self.interf.fill((0, 0, 0))
 
     def new_fruit(self):
         self.fruit = Fruit(*self.snake.get_pos())
@@ -122,18 +136,18 @@ class Game:
         self.display = pygame.display.set_mode((len(fields) * WIDTH, HEIGHT))
 
         while self.GAME_RUNNING:
-            #print(game_field.snake.head)
+            print(self.snake.direction)
             self.clock.tick(FPS)
             self.display.fill((0, 0, 0))
             self.keys_loop()
-            self.update()
+            self.update_drawing()
             self.display.blit(self.screen, (0, BAR_HEIGHT))
-            self.display.blit(self.interf, (0, 0))
             pygame.display.flip()
 
     def keys_loop(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            self.frame_number += 1
+            if event.type == pygame.QUIT or not self.snake.alive:
                 self.GAME_RUNNING = False 
             # для теста:
             if event.type == pygame.KEYDOWN:
@@ -147,7 +161,7 @@ class Game:
                     self.snake_right()
 
 def main():
-    Game().mainloop(["AI"])
+    AI_Game().mainloop(["AI"])
 
 if __name__ == "__main__":
     pygame.init()
