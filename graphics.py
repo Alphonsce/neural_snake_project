@@ -54,9 +54,7 @@ def draw_start_menu(buttons, display):
     Меню неподвижно, так что достаточно сделать правильную реализацию
     """
     for button in buttons:
-        #display.blit(button.draw_button(), (button.x - 0.5 * button.width, button.y - 0.5 * button.height))
         button.draw_button(display)
-    #pass
 
 def draw_field(surf, snake_tail, snake_head, fruit, step):
     """ Функция рисует поле.
@@ -108,7 +106,11 @@ def draw_interface(surf, score):
     score - счет
     Возващает холст на котрый добавлен счет
     """
-    pass #FIXME
+    font = pygame.font.SysFont(TEXT_FONT, 50)
+    text = font.render(str(score), True, BLACK)
+    text_rect = text.get_rect()
+    surf_rect = surf.get_rect()
+    surf.blit(text, (0.5 * (surf_rect.width - text_rect.width), 0.5 * (surf_rect.height - text_rect.height)))
     return surf
 
 def draw_text(text, size, x, y, colour, surf):
