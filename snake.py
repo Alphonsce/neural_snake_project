@@ -69,10 +69,10 @@ class Game:
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.menu = True
         menu_buttons = []
-        menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 50))
-        menu_buttons.append(Button("AI only",  WIDTH // 2, 400, 250, 50))
-        menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 500, 250, 50))
-        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 600, 250, 50))
+        menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 55))
+        menu_buttons.append(Button("AI only",  WIDTH // 2, 400, 250, 55))
+        menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 500, 250, 55))
+        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 600, 250, 55))
         while self.menu:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)

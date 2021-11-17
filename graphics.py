@@ -53,6 +53,10 @@ def draw_start_menu(buttons, display):
     На задний план потом можно наложить принтскрин из игры
     Меню неподвижно, так что достаточно сделать правильную реализацию
     """
+    font = pygame.font.SysFont(TEXT_FONT, 80)
+    name = font.render(NAME_OF_GAME, True, NAME_COLOR)
+    name_rect = name.get_rect()
+    display.blit(name, (0.5 * (WIDTH - name_rect.width), 90))
     for button in buttons:
         button.draw_button(display)
 

@@ -11,6 +11,10 @@ ORANGE = 0xBE5504
 DARK_ORANGE = 0x7A3803
 SNAKE_COLORS = [BLUE, GREEN, YELLOW]
 
+# Константы для названия
+NAME_COLOR = YELLOW
+NAME_OF_GAME = 'Змейка'
+
 TEXT_FONT = "arial" # Стиль текста
 
 # параметры игрового поля. Изменение не рекомендованно
