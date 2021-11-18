@@ -85,16 +85,17 @@ class AI_Game:
     def __init__(self):
         self.clock = pygame.time.Clock()
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.frame_number = 0
         # field init:
+
+        self.reset()
+
+    def reset(self):
+        '''здесь находятся все параметры для инициализации игры заново'''
+        self.frame_number = 0
         self.score = 0
         self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self)
         self.fruit = Fruit(*self.snake.get_pos())
         self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
-        self.reset()
-
-    def reset(self):
-        pass
 
 
     def update_drawing(self):
@@ -107,6 +108,7 @@ class AI_Game:
 
     def new_fruit(self):
         self.fruit = Fruit(*self.snake.get_pos())
+        self.score += 1
 
     def snake_down(self):
         self.snake.direction = Direction.DOWN
@@ -122,7 +124,7 @@ class AI_Game:
 
     def mainloop_step(self):
         game_over = not self.snake.alive
-        print(self.snake.direction)
+        #print(self.snake.direction)
         self.clock.tick(FPS)
         self.display.fill((0, 0, 0))
         self.update_drawing()
@@ -148,6 +150,13 @@ def main():
     aigame = AI_Game()
     while True:
         aigame.mainloop_step()
+
+        if not aigame.snake.alive:
+            print(aigame.score)
+            #aigame.reset()
+            break
+
+
 
 if __name__ == "__main__":
     pygame.init()
