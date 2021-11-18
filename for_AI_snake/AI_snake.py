@@ -26,8 +26,6 @@ class Fruit:
             if snakehead == self.pos:
                 not_founded = True
     
-    def get_pos(self):
-        return self.pos
 
 class Snake:
     def __init__(self, x, y, gamefield):
@@ -86,7 +84,6 @@ class AI_Game:
         self.clock = pygame.time.Clock()
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         # field init:
-
         self.reset()
 
     def reset(self):
@@ -99,11 +96,10 @@ class AI_Game:
 
 
     def update_drawing(self):
-        self.snake.move(self.fruit.get_pos(), self.snake.direction)
         self.screen.fill((0, 0, 0))
         self.screen.blit(draw_field(
             self.screen, *self.snake.get_pos(), 
-            self.fruit.get_pos(), self.snake.get_step()
+            self.fruit.pos, self.snake.get_step()
             ), (0, 0))
 
     def new_fruit(self):
@@ -122,12 +118,14 @@ class AI_Game:
     def snake_right(self):
         self.snake.direction = Direction.RIGHT
 
-    def mainloop_step(self):
-        game_over = not self.snake.alive
+    def mainloop_step(self, action=[1, 0, 0]):
         #print(self.snake.direction)
+        self.frame_number += 1
+
         self.clock.tick(FPS)
         self.display.fill((0, 0, 0))
         self.update_drawing()
+        self.snake.move(self.fruit.pos, self.snake.direction)
         self.display.blit(self.screen, (0, BAR_HEIGHT))
         pygame.display.flip()
         for event in pygame.event.get():
@@ -155,7 +153,6 @@ def main():
             print(aigame.score)
             #aigame.reset()
             break
-
 
 
 if __name__ == "__main__":
