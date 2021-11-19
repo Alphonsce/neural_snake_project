@@ -12,6 +12,8 @@ from human_snake import draw_field
 # как получить direction из action: [R, D, L, U] - направления по часовой, если action = [0, 1, 0] - сохраняем direction,
 # если action = [1, 0, 0] - то смещаемся против часовой, если action = [0, 0, 1] - смещаемся по часовой
 
+# reward начисляется за каждый отдельный ход, т.е. за каждую отдельный прогон mainloop_step будет назначен reward
+
 class Fruit:
     def __init__(self, snakepose, snakehead):
         not_founded = True
@@ -88,7 +90,6 @@ class AI_Game:
         self.fruit = Fruit(*self.snake.get_pos())
         self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
 
-
     def update_drawing(self):
         self.screen.fill((0, 0, 0))
         self.screen.blit(draw_field(
@@ -97,17 +98,29 @@ class AI_Game:
             ), (0, 0))
 
     def direction_from_action(self, action=[0, 1, 0]):
-        '''в конце будет self.snake.direction = direction_from_action(action)
-        чтобы move осуществлялся исключительно через direction
+        '''
+        метод позволяет исходя из action получить direction движения змейки,
+        action при этом предсказывается нейронной сетью
         
         '''
-        pass
+        directions_order = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
+        current_direction_order = directions_order.index(self.snake.direction)
+        new_direction_order = None
+        if np.array_equal(action, [0, 1, 0]):
+            new_direction_order = current_direction_order
+        elif np.array_equal(action, [0, 0, 1]):
+            new_direction_order = (current_direction_order + 1) % 4
+        else:
+            new_direction_order = (current_direction_order - 1) % 4
+
+        self.snake.direction = directions_order[new_direction_order]           
 
     def new_fruit(self):
         self.fruit = Fruit(*self.snake.get_pos())
         self.score += 1
 
     def snake_down(self):
+        '''эти 4 метода заменяются полностью предсказанием action из direction'''
         self.snake.direction = Direction.DOWN
 
     def snake_up(self):
@@ -123,36 +136,54 @@ class AI_Game:
         '''Теперь предсказанный action передается сюда,
         затем он передается в move, а потом исходя из action, 
         смотрится direction и выбирается скорость и змейка смещается
+
+        reward назначается за каждый отдельный ход
         '''
         #print(self.snake.direction)
+        self.reward = 0
         self.frame_number += 1
 
         self.clock.tick(FPS)
         self.display.fill((0, 0, 0))
         self.update_drawing()
+
+        old_score = self.score
+        self.direction_from_action([0, 1, 0])
         self.snake.move(self.fruit.pos)
+        new_score = self.score
+
+        if new_score - old_score > 0:
+            self.reward = 5
+        elif not self.snake.alive:
+            self.reward = -5
+        
+
         self.display.blit(self.screen, (0, BAR_HEIGHT))
         pygame.display.flip()
+
         for event in pygame.event.get():
             self.frame_number += 1
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
             # для теста:
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_UP:
-            #         self.snake_up()
-            #     if event.key == pygame.K_DOWN:
-            #         self.snake_down()
-            #     if event.key == pygame.K_LEFT:
-            #         self.snake_left()                        
-            #     if event.key == pygame.K_RIGHT:
-            #         self.snake_right()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.snake_up()
+                if event.key == pygame.K_DOWN:
+                    self.snake_down()
+                if event.key == pygame.K_LEFT:
+                    self.snake_left()                        
+                if event.key == pygame.K_RIGHT:
+                    self.snake_right()
+
+        return self.reward, not self.snake.alive, self.score
+
 
 def main():
     aigame = AI_Game()
     while True:
-        aigame.mainloop_step()
+        print(aigame.mainloop_step())
 
         if not aigame.snake.alive:
             print(aigame.score)
