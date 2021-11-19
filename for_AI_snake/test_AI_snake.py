@@ -8,6 +8,7 @@ from human_snake import draw_field
 
 # вместо is_collision я могу использовать game_field.snake.alive
 # [straight, right, left]
+# внутри AI_Game я сделаю другой метод, который будет из action делать direction и потом просто вызывать move(direction)
 
 class Direction(Enum):
     RIGHT = 1
@@ -45,15 +46,14 @@ class Snake:
         self.direction = Direction.RIGHT
         self.new_direction = Direction.RIGHT
 
-    def move(self, fruit_coords, action):
+    def move(self, fruit_coords, direction):
         """ Отвечает за перемещение змеи
         fruit_coords - положение фрукта на поле
 
-        Суть теперь в том, чтобы из action получить 
-        direction, из которого мы уже получаем скорость
+        Суть теперь в том, чтобы здесь делать движиние по direction,
+        который мы получаем из action при помощи метода в классе AI_Game
         """
         direction = self.direction # временно!
-
 
         if self.alive:
             self.step += 1
@@ -107,6 +107,13 @@ class AI_Game:
             self.screen, *self.snake.get_pos(), 
             self.fruit.pos, self.snake.get_step()
             ), (0, 0))
+
+    def direction_from_action(self, action):
+        '''в конце будет return direction
+        потом self.snake.move(direction_from_action(action))
+        
+        '''
+        pass
 
     def new_fruit(self):
         self.fruit = Fruit(*self.snake.get_pos())
