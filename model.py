@@ -31,10 +31,10 @@ class Snake:
         x, y - начальные координаты головы 
         gamefield - игровое поле, в котором змейка перемещается
         """
-        self.tail = [(x-1, y)]
+        self.tail = [(x-1, y), (x-2, y)]
         self.head = (x, y)
         self.speed = (1, 0)
-        self.new_speed = (1, 0)
+        self.direction = Direction.RIGHT
         self.alive = True
         self.step = 0
         self.gamefield = gamefield
@@ -46,9 +46,12 @@ class Snake:
         if self.alive:
             self.step += 1
         if self.step >= FRAMES_PER_STEP:
+            Vx, Vy = self.speed
+            if self.direction.value != (-Vx, -Vy):
+                self.speed = self.direction.value
+                Vx, Vy = self.speed
             self.step = 0
             x, y = self.head 
-            Vx, Vy = self.speed
             if not(0 <= (x + Vx) < FIELD_SIZE_W and 0 <= (y + Vy) < FIELD_SIZE_H):
                 self.speed = (0, 0)
                 self.alive = False
@@ -64,24 +67,22 @@ class Snake:
                         self.gamefield.new_fruit()
                     self.tail.append(self.head)
                     self.head = (x + Vx, y + Vy)
-                    if self.new_speed != (-Vx, -Vy):
-                        self.speed = self.new_speed
                 
     def up(self):
         """ Попытка поворта наверх"""
-        self.new_speed = (0, -1)
+        self.direction = (0, -1)
 
     def down(self):
         """ Попытка поворта вниз"""
-        self.new_speed = (0, 1)
+        self.direction = (0, 1)
 
     def left(self):
         """ Попытка поворта налево"""
-        self.new_speed = (-1, 0)
+        self.direction = (-1, 0)
             
     def right(self):
         """ Попытка поворта направо"""
-        self.new_speed = (1, 0)
+        self.direction = (1, 0)
 
     def get_pos(self):
         """ Возвращает положения частей хвоста и головы"""

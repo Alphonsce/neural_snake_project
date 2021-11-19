@@ -29,6 +29,9 @@ class Game_field:
             self.screen, *self.snake.get_pos(), 
             self.fruit.get_pos(), self.snake.get_step()
             ), (0, 0))
+        if self.snake.alive == False:
+            draw_text("Game Over", 50, WIDTH/2, HEIGHT/2 - 100, RED, self.screen)
+            draw_text("press ECS", 50, WIDTH/2, HEIGHT/2, RED, self.screen)
         self.interf.fill((90, 90, 90))
         self.interf.blit(draw_interface(self.interf, self.score), (0, 0))
 
@@ -39,19 +42,19 @@ class Game_field:
 
     def snake_down(self):
         """ На данном поле змея получает приказ повернуть вниз"""
-        self.snake.down()
+        self.snake.direction = Direction.DOWN
 
     def snake_up(self):
         """ На данном поле змея получает приказ повернуть вверх"""
-        self.snake.up()
+        self.snake.direction = Direction.UP
 
     def snake_left(self):
         """ На данном поле змея получает приказ повернуть налево"""
-        self.snake.left()
+        self.snake.direction = Direction.LEFT
 
     def snake_right(self):
         """ На данном поле змея получает приказ повернуть направо"""
-        self.snake.right()
+        self.snake.direction = Direction.RIGHT
 
 class Game:
     """ Объект типа игра отвечает за дисплей и циклы игры
@@ -162,7 +165,6 @@ class Game:
                 if event.button == 1:
                     click = True
         return click
-
 
 def main():
     Game().start_menu()
