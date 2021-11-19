@@ -9,10 +9,10 @@ from human_snake import draw_field
 # вместо is_collision я могу использовать game_field.snake.alive
 
 class Direction(Enum):
-    RIGHT = 1
-    LEFT = 2
-    UP = 3
-    DOWN = 4
+    RIGHT = (1, 0)
+    DOWN = (0, 1)
+    LEFT = (-1, 0)
+    UP = (0, -1)
 
 class Fruit:
     def __init__(self, snakepose, snakehead):
@@ -35,16 +35,9 @@ class Snake:
         self.alive = True
         self.step = 0
         self.gamefield = gamefield
-        self.speed_from_direction = {
-            Direction.RIGHT: (1, 0),
-            Direction.DOWN: (0, 1),
-            Direction.LEFT: (-1, 0),
-            Direction.UP: (0, -1)
-            }
         self.direction = Direction.RIGHT
-        self.new_direction = Direction.RIGHT
 
-    def move(self, fruit_coords, direction):
+    def move(self, fruit_coords):
         """ Отвечает за перемещение змеи
         fruit_coords - положение фрукта на поле
         """
@@ -54,7 +47,7 @@ class Snake:
         if self.step >= FRAMES_PER_STEP:
             self.step = 0
             x, y = self.head 
-            Vx, Vy = self.speed_from_direction[direction]
+            Vx, Vy = self.direction.value
             if not(0 <= (x + Vx) < FIELD_SIZE_W and 0 <= (y + Vy) < FIELD_SIZE_H):
                 self.speed = (0, 0)
                 self.alive = False
@@ -125,7 +118,7 @@ class AI_Game:
         self.clock.tick(FPS)
         self.display.fill((0, 0, 0))
         self.update_drawing()
-        self.snake.move(self.fruit.pos, self.snake.direction)
+        self.snake.move(self.fruit.pos)
         self.display.blit(self.screen, (0, BAR_HEIGHT))
         pygame.display.flip()
         for event in pygame.event.get():

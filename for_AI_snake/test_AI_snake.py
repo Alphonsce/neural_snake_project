@@ -7,14 +7,10 @@ import random
 from human_snake import draw_field
 
 # вместо is_collision я могу использовать game_field.snake.alive
-# [straight, right, left]
+# action имеет формат [straight, right, left]
 # внутри AI_Game я сделаю другой метод, который будет из action делать direction и потом просто вызывать move(direction)
-
-class Direction(Enum):
-    RIGHT = 1
-    LEFT = 2
-    UP = 3
-    DOWN = 4
+# как получить direction из action: [R, D, L, U] - направления по часовой, если action = [0, 1, 0] - сохраняем direction,
+# если action = [1, 0, 0] - то смещаемся против часовой, если action = [0, 0, 1] - смещаемся по часовой
 
 class Fruit:
     def __init__(self, snakepose, snakehead):
@@ -37,30 +33,22 @@ class Snake:
         self.alive = True
         self.step = 0
         self.gamefield = gamefield
-        self.speed_from_direction = {
-            Direction.RIGHT: (1, 0),
-            Direction.DOWN: (0, 1),
-            Direction.LEFT: (-1, 0),
-            Direction.UP: (0, -1)
-            }
         self.direction = Direction.RIGHT
-        self.new_direction = Direction.RIGHT
 
-    def move(self, fruit_coords, direction):
+    def move(self, fruit_coords):
         """ Отвечает за перемещение змеи
         fruit_coords - положение фрукта на поле
 
         Суть теперь в том, чтобы здесь делать движиние по direction,
         который мы получаем из action при помощи метода в классе AI_Game
         """
-        direction = self.direction # временно!
 
         if self.alive:
             self.step += 1
         if self.step >= FRAMES_PER_STEP:
             self.step = 0
             x, y = self.head 
-            Vx, Vy = self.speed_from_direction[direction]
+            Vx, Vy = self.direction.value
             if not(0 <= (x + Vx) < FIELD_SIZE_W and 0 <= (y + Vy) < FIELD_SIZE_H):
                 self.speed = (0, 0)
                 self.alive = False
@@ -108,9 +96,9 @@ class AI_Game:
             self.fruit.pos, self.snake.get_step()
             ), (0, 0))
 
-    def direction_from_action(self, action):
-        '''в конце будет return direction
-        потом self.snake.move(direction_from_action(action))
+    def direction_from_action(self, action=[0, 1, 0]):
+        '''в конце будет self.snake.direction = direction_from_action(action)
+        чтобы move осуществлялся исключительно через direction
         
         '''
         pass
@@ -142,7 +130,7 @@ class AI_Game:
         self.clock.tick(FPS)
         self.display.fill((0, 0, 0))
         self.update_drawing()
-        self.snake.move(self.fruit.pos, action)
+        self.snake.move(self.fruit.pos)
         self.display.blit(self.screen, (0, BAR_HEIGHT))
         pygame.display.flip()
         for event in pygame.event.get():
