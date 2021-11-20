@@ -5,6 +5,7 @@ from enum import Enum
 from collections import namedtuple
 import random
 from human_snake import draw_field
+from agent_for_learning import Learning_Agent
 
 # вместо is_collision я могу использовать game_field.snake.alive
 # action имеет формат [straight, right, left]
@@ -119,18 +120,18 @@ class AI_Game:
         self.fruit = Fruit(*self.snake.get_pos())
         self.score += 1
 
-    def snake_down(self):
-        '''эти 4 метода заменяются полностью предсказанием action из direction'''
-        self.snake.direction = Direction.DOWN
+    # def snake_down(self):
+    #     '''эти 4 метода заменяются полностью предсказанием action из direction'''
+    #     self.snake.direction = Direction.DOWN
 
-    def snake_up(self):
-        self.snake.direction = Direction.UP
+    # def snake_up(self):
+    #     self.snake.direction = Direction.UP
 
-    def snake_left(self):
-        self.snake.direction = Direction.LEFT
+    # def snake_left(self):
+    #     self.snake.direction = Direction.LEFT
 
-    def snake_right(self):
-        self.snake.direction = Direction.RIGHT
+    # def snake_right(self):
+    #     self.snake.direction = Direction.RIGHT
 
     def mainloop_step(self, action=[1, 0, 0]):
         '''Теперь предсказанный action передается сюда,
@@ -167,15 +168,15 @@ class AI_Game:
                 pygame.quit()
                 quit()
             # для теста:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    self.snake_up()
-                if event.key == pygame.K_DOWN:
-                    self.snake_down()
-                if event.key == pygame.K_LEFT:
-                    self.snake_left()                        
-                if event.key == pygame.K_RIGHT:
-                    self.snake_right()
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_UP:
+            #         self.snake_up()
+            #     if event.key == pygame.K_DOWN:
+            #         self.snake_down()
+            #     if event.key == pygame.K_LEFT:
+            #         self.snake_left()                        
+            #     if event.key == pygame.K_RIGHT:
+            #         self.snake_right()
 
         return self.reward, not self.snake.alive, self.score
 
