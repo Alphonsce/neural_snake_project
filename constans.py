@@ -29,10 +29,15 @@ FIELD_SIZE_H = int((HEIGHT - BAR_HEIGHT) // CELL_SIDE)
 WIDTH_OF_TAIL = 0.8 #коэффициент толщины для рисовки хвоста
  
 #Количество обработок в секунду
-FPS = 30
+FPS = 60
 # По факту задает скорость змеи. V * FRAMES_PER_STEP = FPS
-FRAMES_PER_STEP = 5
+FRAMES_PER_STEP = 6
 
+class Direction(Enum):
+    RIGHT = (1, 0)
+    LEFT = (-1, 0)
+    UP = (0, -1)
+    DOWN = (0, 1)
 
 # Пока что не используемый нами блок
 class Cell(Enum):
