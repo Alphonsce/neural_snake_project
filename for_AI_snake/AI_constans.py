@@ -10,6 +10,7 @@ LR = 0.005
 GAMMA = 0.9     # параметр, регулирующий обучение с подкреплением
 EPSILON = 0     # параметр, отвечающий за случайность принятых агентом решений
 
+WAITING_CONSTANT = 10000      # отвечает за то как долго мы готовы ждать конца, когда агент циклит одно движение
 #---------------
 
 GRAY = (150, 150, 150)
@@ -31,8 +32,8 @@ HEIGHT = 800
 BAR_HEIGHT = 50
 CELL_SIDE = 30
 # ширина и высота игрового поля в клеточках
-FIELD_SIZE_W = int((WIDTH) // CELL_SIDE)
-FIELD_SIZE_H = int((HEIGHT - BAR_HEIGHT) // CELL_SIDE)
+FIELD_SIZE_W = int((WIDTH) // CELL_SIDE)        # 25, максимально, когда змея жива: 24
+FIELD_SIZE_H = int((HEIGHT - BAR_HEIGHT) // CELL_SIDE)      # 25, максимально, когда змея жива: 24
 
 WIDTH_OF_TAIL = 0.8 #коэффициент толщины для рисовки хвоста
  
@@ -51,6 +52,11 @@ class Cell(Enum):
 
 
 class Direction(Enum):
+    def __eq__(self, other):
+        if self.value == other.value:
+            return True
+        return False
+
     RIGHT = (1, 0)
     DOWN = (0, 1)
     LEFT = (-1, 0)
