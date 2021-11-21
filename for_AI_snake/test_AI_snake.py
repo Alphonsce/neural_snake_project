@@ -98,6 +98,28 @@ class AI_Game:
             self.fruit.pos, self.snake.get_step()
             ), (0, 0))
 
+    def is_looped(self):
+        ''' проверка на то что агент стал циклить одно движение,
+        self.frame_number после собирания фрукта обновляется внутри new_fruit
+        '''
+        if self.frame_number > WAITING_CONSTANT * (len(self.snake.tail) + 1):
+            self.snake.alive = False
+
+    def will_be_dead(self, point):
+        '''функция, которая показывает по переданной ей координате точки,
+        будет ли игра проиграна, если этой точкой будет голова
+        '''
+        x, y = point
+
+        # смерть об стены:
+        if x >= FIELD_SIZE_W or y >= FIELD_SIZE_H:
+            return True
+        # смерть об хвост:
+        if (x, y) in self.snake.tail:
+            return True
+        return False
+
+
     def direction_from_action(self, action=[0, 1, 0]):
         '''
         метод позволяет исходя из action получить direction движения змейки,
@@ -117,21 +139,22 @@ class AI_Game:
         self.snake.direction = directions_order[new_direction_order]           
 
     def new_fruit(self):
+        self.frame_number = 0
         self.fruit = Fruit(*self.snake.get_pos())
         self.score += 1
 
-    # def snake_down(self):
-    #     '''эти 4 метода заменяются полностью предсказанием action из direction'''
-    #     self.snake.direction = Direction.DOWN
+    def snake_down(self):
+        '''эти 4 метода заменяются полностью предсказанием action из direction'''
+        self.snake.direction = Direction.DOWN
 
-    # def snake_up(self):
-    #     self.snake.direction = Direction.UP
+    def snake_up(self):
+        self.snake.direction = Direction.UP
 
-    # def snake_left(self):
-    #     self.snake.direction = Direction.LEFT
+    def snake_left(self):
+        self.snake.direction = Direction.LEFT
 
-    # def snake_right(self):
-    #     self.snake.direction = Direction.RIGHT
+    def snake_right(self):
+        self.snake.direction = Direction.RIGHT
 
     def mainloop_step(self, action=[1, 0, 0]):
         '''Теперь предсказанный action передается сюда,
@@ -141,6 +164,9 @@ class AI_Game:
         reward назначается за каждый отдельный ход
         '''
         #print(self.snake.direction)
+        # x, y = self.snake.head
+        # print(self.will_be_dead((x, y)))
+
         self.reward = 0
         self.frame_number += 1
 
@@ -153,6 +179,7 @@ class AI_Game:
         self.snake.move(self.fruit.pos)
         new_score = self.score
 
+        self.is_looped()
         if new_score - old_score > 0:
             self.reward = 5
         elif not self.snake.alive:
@@ -168,23 +195,26 @@ class AI_Game:
                 pygame.quit()
                 quit()
             # для теста:
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_UP:
-            #         self.snake_up()
-            #     if event.key == pygame.K_DOWN:
-            #         self.snake_down()
-            #     if event.key == pygame.K_LEFT:
-            #         self.snake_left()                        
-            #     if event.key == pygame.K_RIGHT:
-            #         self.snake_right()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.snake_up()
+                if event.key == pygame.K_DOWN:
+                    self.snake_down()
+                if event.key == pygame.K_LEFT:
+                    self.snake_left()                        
+                if event.key == pygame.K_RIGHT:
+                    self.snake_right()
 
         return self.reward, not self.snake.alive, self.score
 
 
 def main():
     aigame = AI_Game()
+    agent = Learning_Agent()
     while True:
-        print(aigame.mainloop_step())
+        aigame.mainloop_step()
+        #print(aigame.mainloop_step())
+        print(agent.get_state(aigame))
 
         if not aigame.snake.alive:
             print(aigame.score)
