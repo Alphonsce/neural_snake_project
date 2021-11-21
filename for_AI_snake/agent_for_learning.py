@@ -7,6 +7,7 @@ from AI_snake import AI_Game, Direction
 from AI_constans import MAX_MEMORY
 import training_model
 
+# test123
 
 class Learning_Agent:
     '''Агент - это то, что управляет игрой, 
