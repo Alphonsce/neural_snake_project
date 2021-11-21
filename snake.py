@@ -10,11 +10,12 @@ from constans import *
 
 class Game_field:
     """ Собственно само независимое игровое поле"""
-    def __init__(self, x):
+    def __init__(self, x, visual_mod):
         """ При инициализации полю сразу передается координата 
         по которой будет данное поле выводиться на экран
         """
         self.score = 0
+        self.visual_mod = visual_mod
         self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self)
         self.fruit = Fruit(*self.snake.get_pos())
         self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
@@ -25,7 +26,7 @@ class Game_field:
         """ Обновление состояния поля """
         self.snake.move(self.fruit.get_pos())
         self.screen.fill((0, 0, 0))
-        self.screen.blit(draw_field(
+        self.screen.blit(self.visual_mod(
             self.screen, *self.snake.get_pos(), 
             self.fruit.get_pos(), self.snake.get_step()
             ), (0, 0))
@@ -65,6 +66,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.GAME_RUNNING = True
+        self.visual_mod = draw_field
 
     def start_menu(self):
         """ Стартовое меню отвечает за выбор и распределение игровых модов """
@@ -75,7 +77,8 @@ class Game:
         menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 55))
         menu_buttons.append(Button("AI only",  WIDTH // 2, 400, 250, 55))
         menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 500, 250, 55))
-        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 600, 250, 55))
+        menu_buttons.append(Button("Settings",  WIDTH // 2 , 600, 250, 55))
+        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 700, 250, 55))
         while self.menu:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
@@ -91,6 +94,9 @@ class Game:
                     if i == 2:
                         self.mainloop(["AI", "gamer"])
                     if i == 3:
+                        self.visual_mod_selector()
+                        self.menu = True
+                    if i == 4:
                         self.GAME_RUNNING = False
             draw_start_menu(menu_buttons, self.display)
             pygame.display.flip()
@@ -107,7 +113,7 @@ class Game:
         pygame.display.quit()
         self.display = pygame.display.set_mode((len(fields) * WIDTH, HEIGHT))
         for i in range(len(fields)):
-            game_field = Game_field(i * WIDTH)
+            game_field = Game_field(i * WIDTH, self.visual_mod)
             self.game_fields.append(game_field)
             if fields[i] == "gamer":
                 self.gamer = game_field
@@ -165,6 +171,29 @@ class Game:
                 if event.button == 1:
                     click = True
         return click
+
+    def visual_mod_selector(self):
+        self.menu = True
+        menu_buttons = []
+        menu_buttons.append(Button("Defolt", WIDTH // 2, 400, 250, 55))
+        menu_buttons.append(Button("Epileptics death",  WIDTH // 2, 500, 300, 55))
+        menu_buttons.append(Button("BACK",  WIDTH // 2 , 600, 250, 55))
+        while self.menu:
+            x, y = pygame.mouse.get_pos()
+            self.clock.tick(FPS)
+            self.display.fill((0, 0, 0))
+            click = self.keys_menu()
+            for i in range(len(menu_buttons)):
+                if menu_buttons[i].check_pressed(x, y) and click:
+                    self.menu = False
+                    if i == 0:
+                        self.visual_mod = draw_field
+                    if i == 1:
+                        self.visual_mod = draw_field
+                    if i == 2:
+                        pass
+            draw_start_menu(menu_buttons, self.display)
+            pygame.display.flip()
 
 def main():
     Game().start_menu()
