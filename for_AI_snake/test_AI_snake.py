@@ -143,6 +143,7 @@ class AI_Game:
         self.fruit = Fruit(*self.snake.get_pos())
         self.score += 1
 
+# ---------------------
     def snake_down(self):
         '''эти 4 метода заменяются полностью предсказанием action из direction'''
         self.snake.direction = Direction.DOWN
@@ -155,8 +156,9 @@ class AI_Game:
 
     def snake_right(self):
         self.snake.direction = Direction.RIGHT
+# ---------------------
 
-    def mainloop_step(self, action=[1, 0, 0]):
+    def mainloop_step(self, action=[0, 1, 0]):
         '''Теперь предсказанный action передается сюда,
         затем он передается в move, а потом исходя из action, 
         смотрится direction и выбирается скорость и змейка смещается
@@ -175,7 +177,7 @@ class AI_Game:
         self.update_drawing()
 
         old_score = self.score
-        self.direction_from_action([0, 1, 0])
+        self.direction_from_action(action)
         self.snake.move(self.fruit.pos)
         new_score = self.score
 
@@ -212,7 +214,7 @@ def main():
     aigame = AI_Game()
     agent = Learning_Agent()
     while True:
-        aigame.mainloop_step()
+        aigame.mainloop_step([0, 1, 0])
         #print(aigame.mainloop_step())
         print(agent.get_state(aigame))
 
