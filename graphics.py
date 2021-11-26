@@ -2,6 +2,62 @@ import pygame
 import numpy as np
 from constans import *
 
+class Slider():
+    def __init__(self, x, y, width, positions: tuple) -> None:
+        """Класс ползунок. Создается ползунок:
+        x, y - координаты середины ползунка
+        width - ширина области ползунка
+        positions - количество позиций ползунка (от, до, шаг)
+        высота ползунка фиксированна - 20
+        ширина ползкнка 30
+        """
+        self.x = x
+        self.y = y 
+        self.start, self.end, self.step = positions
+        self.w = width // 2
+        self.h = 10
+        self.b = 30
+        self.pos = self.start
+        self.colour = ORANGE
+        self.active = False
+
+    def draw(self, surf):
+        """ Отрисовка ползунка и вывод соответствующего значения на экран
+        surf - поверхность отрисовки
+        """
+        pygame.draw.rect(surf, ORANGE, [(self.x - self.w),
+            (self.y - self.h), 2 * self.w, 2 * self.h
+            ], 1)
+        pygame.draw.rect(surf, self.colour, [
+            self.x - self.w + int((2 * self.w - self.b) * (self.pos - self.start) / (self.end - self.start)),
+            self.y - self.h, self.b, 2 * self.h
+            ])
+        draw_text(str(self.pos), 20, self.x + self.w + 40, self.y - self.h, WHITE, surf)
+        return surf
+        
+    def check_press(self, x, y):
+        """ Проверка активации ползунка
+        х, у - координаты мыши
+        """
+        if abs(self.x - x) < self.w and abs(self.y - y) < self.h:
+            self.colour = DARK_ORANGE
+            self.active = True
+
+    def update(self, x):
+        """ Обновление позиции ползунка
+        x - координата х мыши
+        """
+        if self.active:
+            self.pos = self.start + int((x - self.x + self.w)/(2 * self.w) *
+            (self.end - self.start))//self.step * self.step
+            if self.pos > self.end:
+                self.pos = self.end
+            elif self.pos < self.start:
+                self.pos = self.start
+    
+    def deactivate(self):
+        self.active = False
+        self.colour = ORANGE
 
 
 class Button():
@@ -126,8 +182,8 @@ def draw_text(text, size, x, y, colour, surf):
     colour: цвет текста
     surf: холст, на который пишется
     """
-    font = pygame.font.SysFont(TEXT_FONT, size)
-    text_surface = font.render(text, True, colour)
+    fon = pygame.font.SysFont(TEXT_FONT, size)
+    text_surface = fon.render(text, True, colour)
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y)
     surf.blit(text_surface, text_rect)

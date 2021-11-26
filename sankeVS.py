@@ -6,8 +6,8 @@ from pygame import display
 from model import *
 from graphics import *
 from constans import *
-import snakeVS
-
+#from server import *
+#from client import *
 
 class Game_field:
     """ Собственно само независимое игровое поле"""
@@ -57,7 +57,7 @@ class Game_field:
         """ На данном поле змея получает приказ повернуть направо"""
         self.snake.direction = Direction.RIGHT
 
-class Game:
+class GameVS:
     """ Объект типа игра отвечает за дисплей и циклы игры
     Также отвечает за ввод и распределение гейммодов
     """
@@ -65,6 +65,8 @@ class Game:
         """ Создание объекта типа игра"""
         self.clock = pygame.time.Clock()
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
+        self.interf = pygame.Surface((WIDTH, BAR_HEIGHT))
         self.GAME_RUNNING = True
 
     def start_menu(self):
@@ -73,15 +75,34 @@ class Game:
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.menu = True
         menu_buttons = []
-        menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 55))
-        menu_buttons.append(Button("AI only",  WIDTH // 2, 400, 250, 55))
-        menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 500, 250, 55))
-        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 600, 250, 55))
+        sliders = []
+        sliders.append(Slider(WIDTH / 2, 700, 250, (1, 10, 1)))
+        menu_buttons.append(Button("PLAY", WIDTH // 2, 200, 300, 55))
+        menu_buttons.append(Button("RUN SERVER",  WIDTH // 2, 300, 300, 55))
+        menu_buttons.append(Button("STOP SERVER",  WIDTH // 2, 400, 300, 55))
+        menu_buttons.append(Button("FIND SERVER",  WIDTH // 2, 500, 300, 55))
+        menu_buttons.append(Button("BACK",  WIDTH // 2 , 600, 300, 55))
         while self.menu:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
             self.display.fill((0, 0, 0))
-            click = self.keys_menu()
+            click = False
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.GAME_RUNNING = False 
+                    self.menu = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        click = True
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1:
+                        for item in sliders:
+                            item.deactivate()
+            for item in sliders:
+                item.update(x)
+                if click:
+                    item.check_press(x, y)
+                item.draw(self.display)
             for i in range(len(menu_buttons)):
                 if menu_buttons[i].check_pressed(x, y) and click:
                     self.menu = False
@@ -94,6 +115,7 @@ class Game:
                     if i == 3:
                         self.GAME_RUNNING = False
             draw_start_menu(menu_buttons, self.display)
+            draw_text("PLAYERS NUMBER", 30, WIDTH / 2, 650, WHITE, self.display)
             pygame.display.flip()
 
     def mainloop(self, fields: list):
@@ -155,22 +177,7 @@ class Game:
                     if event.key == pygame.K_RIGHT:
                         self.gamer.snake_right()
 
-    def keys_menu(self):
-        """ Контроллер для стартового меню. """
-        click = False
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.GAME_RUNNING = False 
-                self.menu = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    click = True
-        return click
 
-def main():
-    Game().start_menu()
-
-if __name__ == "__main__":
-    pygame.init()
-    main()
-    pygame.quit()
+pygame.init()
+GameVS().start_menu()
+pygame.quit()
