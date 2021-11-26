@@ -6,7 +6,7 @@ from collections import deque
 
 from AI_snake import AI_Game
 from AI_constans import *
-import training_model
+from training_model import *
 
 
 class Learning_Agent:
@@ -21,8 +21,8 @@ class Learning_Agent:
         self.memory = deque(maxlen=MAX_MEMORY)      # при переполнении памяти, будет удалять данные из левого края списка
         self.epsilon = 0
 
-        self.model = training_model.Neural_network(11, 256, 3)       # нейронная сеть с 11 входными нейронами(state) и 3 выходными (action)
-        self.trainer = None     # это сам "обучатель" - алгоритм, который обучает нейронную сеть self.model, минимизируя Q функцию принятия решения
+        self.model = Neural_network(11, 256, 3)       # нейронная сеть с 11 входными нейронами(state) и 3 выходными (action)
+        self.trainer = Q_func_Trainer(self.model, LR, GAMMA)     # это то, что оптимизирует выбранную функцию потерь, используя нейронную сеть, в которой веса обновляются при помощи Adam алгоритма
 
 
     def get_state(self, game_class):
@@ -109,8 +109,8 @@ class Learning_Agent:
             index_of_action = random.randint(0, 2)
             final_action[index_of_action] = 1
         else:
-            tensor_state = torch.tensor(state, dtype=torch.float16)
-            prediction = self.model.predict(tensor_state)   # np.array вида [x y z]
+            tensor_state = torch.tensor(state, dtype=torch.float)
+            prediction = self.model(tensor_state)   # np.array вида [x y z]
             index_of_action = torch.argmax(prediction).item()       # получаем индекс макс элемента и из torch.tensor и item() переводит его в int
             final_action[index_of_action] = 1
         
@@ -150,7 +150,7 @@ def training_process():
 
             if score > best_score:
                 best_score = score
-                # agent.model.save()
+                agent.model.save()
             
             print('game:', agent.number_of_games, 'score:', score)
 
