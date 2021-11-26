@@ -5,7 +5,7 @@ from enum import Enum
 from collections import namedtuple
 import random
 from human_snake import draw_field
-from agent_for_learning import Learning_Agent
+import agent_for_learning
 
 # вместо is_collision я могу использовать game_field.snake.alive
 # action имеет формат [straight, right, left]
@@ -212,7 +212,7 @@ class AI_Game:
 
 def main():
     aigame = AI_Game()
-    agent = Learning_Agent()
+    agent = agent_for_learning.Learning_Agent()
     while True:
         aigame.mainloop_step([0, 1, 0])
         #print(aigame.mainloop_step())
