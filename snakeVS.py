@@ -108,11 +108,7 @@ class GameVS:
                     self.menu = False
                     if i == 0:
                         self.mainloop(["gamer"])
-                    if i == 1:
-                        self.mainloop(["AI"])
-                    if i == 2:
-                        self.mainloop(["AI", "gamer"])
-                    if i == 3:
+                    if i == 4:
                         self.GAME_RUNNING = False
             draw_start_menu(menu_buttons, self.display)
             draw_text("PLAYERS NUMBER", 30, WIDTH / 2, 650, WHITE, self.display)
@@ -178,6 +174,6 @@ class GameVS:
                         self.gamer.snake_right()
 
 
-pygame.init()
+"""pygame.init()
 GameVS().start_menu()
-pygame.quit()
+pygame.quit()"""

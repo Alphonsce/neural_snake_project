@@ -74,9 +74,10 @@ class Game:
         self.menu = True
         menu_buttons = []
         menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 55))
-        menu_buttons.append(Button("AI only",  WIDTH // 2, 400, 250, 55))
-        menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 500, 250, 55))
-        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 600, 250, 55))
+        menu_buttons.append(Button("PVP", WIDTH // 2, 400, 250, 55))
+        menu_buttons.append(Button("AI only",  WIDTH // 2, 500, 250, 55))
+        menu_buttons.append(Button("AI vs Player",  WIDTH // 2, 600, 250, 55))
+        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 700, 250, 55))
         while self.menu:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
@@ -88,10 +89,13 @@ class Game:
                     if i == 0:
                         self.mainloop(["gamer"])
                     if i == 1:
-                        self.mainloop(["AI"])
+                        snakeVS.GameVS().start_menu()
+                        self.menu = True
                     if i == 2:
-                        self.mainloop(["AI", "gamer"])
+                        self.mainloop(["AI"])
                     if i == 3:
+                        self.mainloop(["AI", "gamer"])
+                    if i == 4:
                         self.GAME_RUNNING = False
             draw_start_menu(menu_buttons, self.display)
             pygame.display.flip()
