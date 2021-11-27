@@ -6,6 +6,7 @@ from pygame import display
 from model import *
 from graphics import *
 from constans import *
+import snake
 #from server import *
 #from client import *
 
@@ -61,18 +62,17 @@ class GameVS:
     """ Объект типа игра отвечает за дисплей и циклы игры
     Также отвечает за ввод и распределение гейммодов
     """
-    def __init__(self):
+    def __init__(self, game):
         """ Создание объекта типа игра"""
         self.clock = pygame.time.Clock()
-        self.display = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.game = game
+        self.display = self.game.display
         self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
         self.interf = pygame.Surface((WIDTH, BAR_HEIGHT))
         self.GAME_RUNNING = True
 
     def start_menu(self):
         """ Стартовое меню отвечает за выбор и распределение игровых модов """
-        pygame.display.quit()
-        self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.menu = True
         menu_buttons = []
         sliders = []
@@ -108,8 +108,10 @@ class GameVS:
                     self.menu = False
                     if i == 0:
                         self.mainloop(["gamer"])
+                    if 0 < i < 4:
+                        self.menu = True
                     if i == 4:
-                        self.GAME_RUNNING = False
+                        self.game.start_menu()
             draw_start_menu(menu_buttons, self.display)
             draw_text("PLAYERS NUMBER", 30, WIDTH / 2, 650, WHITE, self.display)
             pygame.display.flip()
@@ -123,8 +125,6 @@ class GameVS:
         """
         self.gamer = None
         self.game_fields = []
-        pygame.display.quit()
-        self.display = pygame.display.set_mode((len(fields) * WIDTH, HEIGHT))
         for i in range(len(fields)):
             game_field = Game_field(i * WIDTH)
             self.game_fields.append(game_field)

@@ -89,14 +89,13 @@ class Game:
                     if i == 0:
                         self.mainloop(["gamer"])
                     if i == 1:
-                        snakeVS.GameVS().start_menu()
-                        self.menu = True
+                        self.VS_mod()
                     if i == 2:
                         self.mainloop(["AI"])
                     if i == 3:
                         self.mainloop(["AI", "gamer"])
                     if i == 4:
-                        self.GAME_RUNNING = False
+                        self.quit_game()
             draw_start_menu(menu_buttons, self.display)
             pygame.display.flip()
 
@@ -133,8 +132,8 @@ class Game:
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.GAME_RUNNING = False 
-                self.menu = False
+                self.quit_game()
+                #self.menu = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     pause = True
@@ -164,12 +163,19 @@ class Game:
         click = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.GAME_RUNNING = False 
+                self.quit_game()
                 self.menu = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
         return click
+
+    def VS_mod(self):
+        snakeVS.GameVS(self).start_menu()
+
+    def quit_game(self):
+        self.GAME_RUNNING = False
+
 
 def main():
     Game().start_menu()
