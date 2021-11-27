@@ -5,7 +5,7 @@ from enum import Enum
 from collections import namedtuple
 import random
 from human_snake import draw_field
-from agent_for_learning import Learning_Agent
+#from agent_for_learning import Learning_Agent
 
 # вместо is_collision я могу использовать game_field.snake.alive
 # action имеет формат [straight, right, left]
