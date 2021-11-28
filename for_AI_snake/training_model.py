@@ -60,12 +60,18 @@ class Q_func_Trainer:
             # на всём batch'е обучаемся
             Q_new = reward[idx]
             if not game_over[idx]:
-                Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))       # уравнение Беллмана
+                Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))       # уравнение Беллмана, оно использует как раз reward 
 
             target[idx][torch.argmax(action[idx]).item()] = Q_new
     
         self.optimizer.zero_grad()
+
         loss = self.criterion(target, prediction)       # функция потерь - это MSE между Q в текущем положении и максимальным Q в следующем положении
+
+# Допустим нейронная сеть выдала нам прогнозы вида: [5, 2, 1] - отсюда мы должны выполнить действие [1, 0, 0], но значения Q соответственно равны 5, 2, 1
+# затем используя уравнение Беллмана мы находим максимально возможное значение Q функции для следующего действия, пусть оно равно [10, 7, 5]
+# тогда loss у нас получится (25 + 9 + 16) / 3
+
         loss.backward()     # это просто последний этап back propagation
 
         self.optimizer.step()
