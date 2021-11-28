@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
+import pygame
 import random
 from collections import deque
 
@@ -128,6 +129,7 @@ class Learning_Agent:
 def training_process():
     '''Функция, которая запускает само обучение нейронной сети,
     '''
+    pygame.init()
     scores = []
     avg_scores = []
     total_score = 0

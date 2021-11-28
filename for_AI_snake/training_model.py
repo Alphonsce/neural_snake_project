@@ -12,8 +12,10 @@ class Neural_network(nn.Module):
         self.linear2 = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
-        x = F.relu(self.linear1(x))
-        x = self.linear2(x)
+        x = x       # входной слой
+        x = F.relu(self.linear1(x))     # скрытый слой с функцией активации
+        x = self.linear2(x)     # просто линейные комбинации весов со значениями в нейронах на предыдущем слое - выходной слой без функции активации
+
         return x
 
     def save(self, file_name='model.pth'):
