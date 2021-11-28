@@ -157,7 +157,7 @@ def training_process():
             print('game:', agent.number_of_games, 'score:', score)
 
 
-def running_learned_snake(path_to_the_file_for_model):
+def running_learned_snake(path_to_the_file_for_model='./model/learned_model.pth'):
     '''функция, которая запускает просто визуализацию игры уже обученной змейки
     path_to_the_file_for_model - путь к файлу с обученной моделью
     '''
