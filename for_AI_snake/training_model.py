@@ -26,7 +26,7 @@ class Neural_network(nn.Module):
         file_name = os.path.join(model_folder_path, file_name)
         torch.save(self.state_dict(), file_name)
 
-    def load(self, path='./model/test_model.pth'):
+    def load(self, path='./model/learned_model.pth'):
         self.load_state_dict(torch.load(path))
         self.was_loaded = True
 

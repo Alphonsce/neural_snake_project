@@ -23,9 +23,7 @@ class Learning_Agent:
         self.epsilon = 0
 
         self.model = Neural_network(11, 256, 3)       # нейронная сеть с 11 входными нейронами(state) и 3 выходными (action)
-        self.model.load()
         self.trainer = Q_func_Trainer(self.model, LR, GAMMA)     # это то, что оптимизирует выбранную функцию потерь, используя нейронную сеть, в которой веса обновляются при помощи Adam алгоритма
-
 
     def get_state(self, game_class):
         '''метод получения state
@@ -129,10 +127,7 @@ class Learning_Agent:
 def training_process():
     '''Функция, которая запускает само обучение нейронной сети,
     '''
-    pygame.init()
-    scores = []
-    avg_scores = []
-    total_score = 0
+    
     best_score = 0
     agent = Learning_Agent()
     game = AI_Game()
@@ -140,7 +135,6 @@ def training_process():
         old_state = agent.get_state(game)
 
         move = agent.get_action(old_state)
-        #move = [0, 1, 0]
 
         reward, game_over, score = game.mainloop_step(move)     # 1 сдвиг змейки и получение результатов этого сдвига
 
@@ -158,11 +152,42 @@ def training_process():
 
             if score > best_score:
                 best_score = score
-                if not agent.model.was_loaded:
-                    '''если модель была загружена, то ее уже не надо сохранять'''
-                    agent.model.save()
+                agent.model.save()
             
             print('game:', agent.number_of_games, 'score:', score)
 
+
+def running_learned_snake(path_to_the_file_for_model):
+    '''функция, которая запускает просто визуализацию игры уже обученной змейки
+    path_to_the_file_for_model - путь к файлу с обученной моделью
+    '''
+    scores = []
+    avg_scores = []
+    total_score = 0
+    best_score = 0
+
+    agent = Learning_Agent()
+    agent.model.load(path_to_the_file_for_model)      # вгружаем агенту уже обученную нейронную сеть
+    game = AI_Game()
+
+    while True:
+        old_state = agent.get_state(game)
+
+        move = agent.get_action(old_state)
+
+        reward, game_over, score = game.mainloop_step(move)     # 1 сдвиг змейки и получение результатов этого сдвига
+
+        if game_over:
+            game.reset()
+            agent.number_of_games += 1
+
+            if score > best_score:
+                best_score = score
+            
+            print('game:', agent.number_of_games, 'score:', score)
+
+
 if __name__ == '__main__':
+    pygame.init()
     training_process()
+    #running_learned_snake()
