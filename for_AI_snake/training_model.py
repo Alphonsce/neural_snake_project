@@ -53,19 +53,19 @@ class Q_func_Trainer:
             reward = torch.unsqueeze(reward, 0)
             game_over = (game_over, )
 
-        prediction = self.model(state)      # model(state) выполняет model.forward, вот так вот torch работает
+        prediction = self.model(state)      # model(state) выполняет model.forward, вот так вот torch работает, в итоге имеем Q для 3 выходных нейронов
 
         target = prediction.clone()
         for idx in range(len(game_over)):
             # на всём batch'е обучаемся
             Q_new = reward[idx]
             if not game_over[idx]:
-                Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))
+                Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))       # уравнение Беллмана
 
             target[idx][torch.argmax(action[idx]).item()] = Q_new
     
         self.optimizer.zero_grad()
-        loss = self.criterion(target, prediction)
-        loss.backward()
+        loss = self.criterion(target, prediction)       # функция потерь - это MSE между Q в текущем положении и максимальным Q в следующем положении
+        loss.backward()     # это просто последний этап back propagation
 
         self.optimizer.step()
