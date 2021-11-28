@@ -6,6 +6,7 @@ import os
 
 class Neural_network(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
+        self.was_loaded = False
         super().__init__()
         self.linear1 = nn.Linear(input_size, hidden_size)
         self.linear2 = nn.Linear(hidden_size, output_size)
@@ -22,6 +23,10 @@ class Neural_network(nn.Module):
 
         file_name = os.path.join(model_folder_path, file_name)
         torch.save(self.state_dict(), file_name)
+
+    def load(self, path='./model/test_model.pth'):
+        self.load_state_dict(torch.load(path))
+        self.was_loaded = True
 
 
 class Q_func_Trainer:

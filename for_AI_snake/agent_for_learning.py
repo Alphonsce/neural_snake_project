@@ -22,6 +22,7 @@ class Learning_Agent:
         self.epsilon = 0
 
         self.model = Neural_network(11, 256, 3)       # нейронная сеть с 11 входными нейронами(state) и 3 выходными (action)
+        self.model.load()
         self.trainer = Q_func_Trainer(self.model, LR, GAMMA)     # это то, что оптимизирует выбранную функцию потерь, используя нейронную сеть, в которой веса обновляются при помощи Adam алгоритма
 
 
@@ -105,6 +106,11 @@ class Learning_Agent:
         # действия в начале будет случайными, затем с количеством эпох, случайность будет снижаться
         final_action = [0, 0, 0]
         self.epsilon = STARTING_EPSILON - self.number_of_games
+
+        if self.model.was_loaded:
+            '''если модель была загружена, то ее уже не надо обучать и мы случайность убираем'''
+            self.epsilon = 0
+
         if random.randint(0, 200) < self.epsilon:       # epsilon постепенно уменьшается и случацность постепенно пропадет
             index_of_action = random.randint(0, 2)
             final_action[index_of_action] = 1
@@ -150,7 +156,9 @@ def training_process():
 
             if score > best_score:
                 best_score = score
-                agent.model.save()
+                if not agent.model.was_loaded:
+                    '''если модель была загружена, то ее уже не надо сохранять'''
+                    agent.model.save()
             
             print('game:', agent.number_of_games, 'score:', score)
 
