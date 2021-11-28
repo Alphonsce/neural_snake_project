@@ -1,4 +1,3 @@
 env
 *.pyc
 test_AI_snake.py
-model.pth
