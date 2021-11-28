@@ -53,7 +53,7 @@ class Q_func_Trainer:
             reward = torch.unsqueeze(reward, 0)
             game_over = (game_over, )
 
-        prediction = self.model(state)
+        prediction = self.model(state)      # model(state) выполняет model.forward, вот так вот torch работает
 
         target = prediction.clone()
         for idx in range(len(game_over)):
