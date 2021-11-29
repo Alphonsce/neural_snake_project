@@ -12,8 +12,10 @@ class Neural_network(nn.Module):
         self.linear2 = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
-        x = F.relu(self.linear1(x))
-        x = self.linear2(x)
+        x = x       # входной слой
+        x = F.relu(self.linear1(x))     # скрытый слой с функцией активации
+        x = self.linear2(x)     # просто линейные комбинации весов со значениями в нейронах на предыдущем слое - выходной слой без функции активации
+
         return x
 
     def save(self, file_name='model.pth'):
@@ -24,7 +26,7 @@ class Neural_network(nn.Module):
         file_name = os.path.join(model_folder_path, file_name)
         torch.save(self.state_dict(), file_name)
 
-    def load(self, path='./model/test_model.pth'):
+    def load(self, path='./model/learned_model.pth'):
         self.load_state_dict(torch.load(path))
         self.was_loaded = True
 
@@ -51,19 +53,25 @@ class Q_func_Trainer:
             reward = torch.unsqueeze(reward, 0)
             game_over = (game_over, )
 
-        prediction = self.model(state)
+        prediction = self.model(state)      # model(state) выполняет model.forward, вот так вот torch работает, в итоге имеем Q для 3 выходных нейронов
 
         target = prediction.clone()
         for idx in range(len(game_over)):
             # на всём batch'е обучаемся
             Q_new = reward[idx]
             if not game_over[idx]:
-                Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))
+                Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))       # уравнение Беллмана, оно использует как раз reward 
 
             target[idx][torch.argmax(action[idx]).item()] = Q_new
     
         self.optimizer.zero_grad()
-        loss = self.criterion(target, prediction)
-        loss.backward()
+
+        loss = self.criterion(target, prediction)       # функция потерь - это MSE между Q в текущем положении и максимальным Q в следующем положении
+
+# Допустим нейронная сеть выдала нам прогнозы вида: [5, 2, 1] - отсюда мы должны выполнить действие [1, 0, 0], но значения Q соответственно равны 5, 2, 1
+# затем используя уравнение Беллмана мы находим максимально возможное значение Q функции для следующего действия, пусть оно равно [10, 7, 5]
+# тогда loss у нас получится (25 + 9 + 16) / 3
+
+        loss.backward()     # это просто последний этап back propagation
 
         self.optimizer.step()

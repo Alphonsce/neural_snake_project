@@ -34,14 +34,12 @@ FPS = 60
 FRAMES_PER_STEP = 6
 
 class Direction(Enum):
+    def __eq__(self, other):
+        if self.value == other.value:
+            return True
+        return False
+
     RIGHT = (1, 0)
     LEFT = (-1, 0)
     UP = (0, -1)
     DOWN = (0, 1)
-
-# Пока что не используемый нами блок
-class Cell(Enum):
-    Empty = 0
-    Snake = 1
-    Snake_head = 2
-    Fruit = 3

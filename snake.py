@@ -1,11 +1,14 @@
 import numpy
 import pygame
-from pygame import display
+#from pygame import display
+#from for_AI_snake.human_snake import Game_field
 
 
 from model import *
 from graphics import *
 from constans import *
+from agent import Learning_Agent as agent
+
 
 
 class Game_field:
@@ -55,6 +58,57 @@ class Game_field:
     def snake_right(self):
         """ На данном поле змея получает приказ повернуть направо"""
         self.snake.direction = Direction.RIGHT
+
+
+
+class AI_Game_field(Game_field):
+    def __init__(self, x, path_to_the_file_for_model='./model/learned_model.pth'):
+        super().__init__(x)
+        self.agent = agent()
+        self.agent.model.load(path_to_the_file_for_model) 
+
+    def direction_from_action(self, action=[0, 1, 0]):
+        '''
+        метод позволяет исходя из action получить direction движения змейки,
+        action при этом предсказывается нейронной сетью
+        
+        '''
+        directions_order = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
+        current_direction_order = directions_order.index(self.snake.direction)
+        new_direction_order = current_direction_order + 0
+        if np.array_equal(action, [0, 1, 0]):
+            new_direction_order = current_direction_order
+        elif np.array_equal(action, [0, 0, 1]):
+            new_direction_order = (current_direction_order + 1) % 4
+        else:       # если None остается пока agent.get_action() не сделан, то будет влево крутить
+            new_direction_order = (current_direction_order - 1) % 4
+
+        self.snake.direction = directions_order[new_direction_order]   
+
+    def update(self):
+        old_state = self.agent.get_state(self)
+        move = self.agent.get_action(old_state)
+        self.direction_from_action(move)
+
+        return super().update()
+
+    def will_be_dead(self, point):
+        '''функция, которая показывает по переданной ей координате точки,
+        будет ли игра проиграна, если этой точкой будет голова
+        '''
+        x, y = point
+
+        # смерть об стены:
+        if x >= FIELD_SIZE_W or y >= FIELD_SIZE_H:
+            return True
+        # смерть об хвост:
+        if (x, y) in self.snake.tail:
+            return True
+        return False
+
+
+
+
 
 class Game:
     """ Объект типа игра отвечает за дисплей и циклы игры
@@ -107,10 +161,14 @@ class Game:
         pygame.display.quit()
         self.display = pygame.display.set_mode((len(fields) * WIDTH, HEIGHT))
         for i in range(len(fields)):
-            game_field = Game_field(i * WIDTH)
-            self.game_fields.append(game_field)
+            
+            
             if fields[i] == "gamer":
+                game_field = Game_field(i * WIDTH)
                 self.gamer = game_field
+            if fields[i] == "AI":
+                game_field = AI_Game_field(i * WIDTH)
+            self.game_fields.append(game_field)
         while self.GAME_RUNNING:
             self.clock.tick(FPS)
             self.display.fill((0, 0, 0))
