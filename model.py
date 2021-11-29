@@ -62,12 +62,13 @@ class Snake:
                         self.speed = (0, 0)
                         self.alive = False
                 if self.alive:
+                    self.tail.append(self.head)
+                    self.head = (x + Vx, y + Vy)
                     if fruit != (x + Vx, y + Vy):
                         self.tail.pop(0)
                     else:
                         self.gamefield.new_fruit()
-                    self.tail.append(self.head)
-                    self.head = (x + Vx, y + Vy)
+
 
     def get_pos(self):
         """ Возвращает положения частей хвоста и головы"""
