@@ -149,6 +149,8 @@ class Game:
         menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 400, 250, 55, self.mainloop, (["AI", "gamer"],)))
         menu_buttons.append(Button("Learning",  WIDTH // 2 , 500, 250, 55, self.wait, ()))
         menu_buttons.append(Button("BACK",  WIDTH // 2 , 600, 250, 55, self.go_back, ()))
+        sliders = []
+        sliders.append(Slider(WIDTH / 2, 700, 250, (1, 5, 1)))
         while self.GAME_RUNNING and not self.back:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
@@ -157,7 +159,15 @@ class Game:
             for item in menu_buttons:
                 if item.check_pressed(x, y) and self.click:
                     item.func(*item.args)
+            for item in sliders:
+                item.update(x)
+                item.draw(self.display)
+                if self.click:
+                    item.check_press(x, y)
+                if self.unclick:
+                    item.deactivate()
             draw_start_menu(menu_buttons, self.display)
+            draw_text("Dificalty", 30, WIDTH / 2, 640, WHITE, self.display)
             pygame.display.flip()
         self.back = False
 
