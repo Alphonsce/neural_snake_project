@@ -119,39 +119,65 @@ class Game:
         self.clock = pygame.time.Clock()
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.GAME_RUNNING = True
+        self.back = False
 
     def start_menu(self):
         """ Стартовое меню отвечает за выбор и распределение игровых модов """
         pygame.display.quit()
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.menu = True
         menu_buttons = []
-        menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 55, self.mainloop, (["gamer"],)))
-        menu_buttons.append(Button("AI only",  WIDTH // 2, 400, 250, 55, self.mainloop, (["AI"],)))
-        menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 500, 250, 55, self.mainloop, (["AI", "gamer"],)))
-        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 600, 250, 55, self.quit_game, ()))
-        while self.menu:
+        menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 55, self.Player_menu, ()))
+        menu_buttons.append(Button("AI mod",  WIDTH // 2, 400, 250, 55, self.Ai_menu, ()))
+        menu_buttons.append(Button("PvP",  WIDTH // 2, 500, 250, 55, self.wait, ()))
+        menu_buttons.append(Button("Settings",  WIDTH // 2, 600, 250, 55, self.wait, ()))
+        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 700, 250, 55, self.quit_game, ()))
+        while self.GAME_RUNNING:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
             self.display.fill((0, 0, 0))
             self.keys_menu()
             for item in menu_buttons:
                 if item.check_pressed(x, y) and self.click:
-                    self.menu = False
                     item.func(*item.args)
-            """ for i in range(len(menu_buttons)):
-                if menu_buttons[i].check_pressed(x, y) and self.click:
-                    self.menu = False
-                    if i == 0:
-                        self.mainloop(["gamer"])
-                    if i == 1:
-                        self.mainloop(["AI"])
-                    if i == 2:
-                        self.mainloop(["AI", "gamer"])
-                    if i == 3:
-                        self.quit_game()"""
             draw_start_menu(menu_buttons, self.display)
             pygame.display.flip()
+
+    def Ai_menu(self):
+        """ Меню AI отвечает за выбор модов из этого раздела"""
+        menu_buttons = []
+        menu_buttons.append(Button("AI only",  WIDTH // 2, 300, 250, 55, self.mainloop, (["AI"],)))
+        menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 400, 250, 55, self.mainloop, (["AI", "gamer"],)))
+        menu_buttons.append(Button("Learning",  WIDTH // 2 , 500, 250, 55, self.wait, ()))
+        menu_buttons.append(Button("BACK",  WIDTH // 2 , 600, 250, 55, self.go_back, ()))
+        while self.GAME_RUNNING and not self.back:
+            x, y = pygame.mouse.get_pos()
+            self.clock.tick(FPS)
+            self.display.fill((0, 0, 0))
+            self.keys_menu()
+            for item in menu_buttons:
+                if item.check_pressed(x, y) and self.click:
+                    item.func(*item.args)
+            draw_start_menu(menu_buttons, self.display)
+            pygame.display.flip()
+        self.back = False
+
+    def Player_menu(self):
+        """ Меню Player отвечает за выбор модов из этого раздела"""
+        menu_buttons = []
+        menu_buttons.append(Button("Player only",  WIDTH // 2, 300, 250, 55, self.mainloop, (["gamer"],)))
+        menu_buttons.append(Button("Learning",  WIDTH // 2 , 500, 250, 55, self.wait, ()))
+        menu_buttons.append(Button("BACK",  WIDTH // 2 , 600, 250, 55, self.go_back, ()))
+        while self.GAME_RUNNING and not self.back:
+            x, y = pygame.mouse.get_pos()
+            self.clock.tick(FPS)
+            self.display.fill((0, 0, 0))
+            self.keys_menu()
+            for item in menu_buttons:
+                if item.check_pressed(x, y) and self.click:
+                    item.func(*item.args)
+            draw_start_menu(menu_buttons, self.display)
+            pygame.display.flip()
+        self.back = False
 
     def mainloop(self, fields: list):
         """ Основной цикл игры.
@@ -189,7 +215,6 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.GAME_RUNNING = False 
-                self.menu = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     pause = True
@@ -221,7 +246,6 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.GAME_RUNNING = False 
-                self.menu = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.click = True
@@ -231,6 +255,12 @@ class Game:
 
     def quit_game(self):
         self.GAME_RUNNING = False 
+    
+    def wait(self):
+        pass
+
+    def go_back(self):
+        self.back = True
 
 def main():
     Game().start_menu()
