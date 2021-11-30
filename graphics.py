@@ -5,12 +5,16 @@ from constans import *
 
 
 class Button():
-    def __init__(self, text, x, y, w, h) -> None:
+    def __init__(self, text, x, y, w, h, func, args) -> None:
         """ Класс кнопка. При создании получает входные:
         text - надпись на кнопке
         x, y - положение кнопки
         w, h - ширина и высота кнопки
+        func - функция которую выполнит кнопка
+        args - аргументы функции :tuple
         """
+        self.func = func
+        self.args = args
         self.text = text
         font = pygame.font.SysFont(TEXT_FONT, 50)
         self.t = font.render(text, True, BLACK)

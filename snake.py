@@ -126,17 +126,21 @@ class Game:
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.menu = True
         menu_buttons = []
-        menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 55))
-        menu_buttons.append(Button("AI only",  WIDTH // 2, 400, 250, 55))
-        menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 500, 250, 55))
-        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 600, 250, 55))
+        menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 55, self.mainloop, (["gamer"],)))
+        menu_buttons.append(Button("AI only",  WIDTH // 2, 400, 250, 55, self.mainloop, (["AI"],)))
+        menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 500, 250, 55, self.mainloop, (["AI", "gamer"],)))
+        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 600, 250, 55, self.quit_game, ()))
         while self.menu:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
             self.display.fill((0, 0, 0))
-            click = self.keys_menu()
-            for i in range(len(menu_buttons)):
-                if menu_buttons[i].check_pressed(x, y) and click:
+            self.keys_menu()
+            for item in menu_buttons:
+                if item.check_pressed(x, y) and self.click:
+                    self.menu = False
+                    item.func(*item.args)
+            """ for i in range(len(menu_buttons)):
+                if menu_buttons[i].check_pressed(x, y) and self.click:
                     self.menu = False
                     if i == 0:
                         self.mainloop(["gamer"])
@@ -145,7 +149,7 @@ class Game:
                     if i == 2:
                         self.mainloop(["AI", "gamer"])
                     if i == 3:
-                        self.GAME_RUNNING = False
+                        self.quit_game()"""
             draw_start_menu(menu_buttons, self.display)
             pygame.display.flip()
 
@@ -161,8 +165,6 @@ class Game:
         pygame.display.quit()
         self.display = pygame.display.set_mode((len(fields) * WIDTH, HEIGHT))
         for i in range(len(fields)):
-            
-            
             if fields[i] == "gamer":
                 game_field = Game_field(i * WIDTH)
                 self.gamer = game_field
@@ -214,15 +216,21 @@ class Game:
 
     def keys_menu(self):
         """ Контроллер для стартового меню. """
-        click = False
+        self.click = False
+        self.unclick = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.GAME_RUNNING = False 
                 self.menu = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    click = True
-        return click
+                    self.click = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    self.unclick = True
+
+    def quit_game(self):
+        self.GAME_RUNNING = False 
 
 def main():
     Game().start_menu()
