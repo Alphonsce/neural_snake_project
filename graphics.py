@@ -139,6 +139,12 @@ def draw_field(surf, gamefield):
     snake_tail, snake_head = gamefield.snake.get_pos()
     fruit = gamefield.fruit.pos
     step = gamefield.snake.get_step()
+    walls = gamefield.walls
+    for item in walls:
+        x, y = item
+        x *= CELL_SIDE
+        y *= CELL_SIDE
+        pygame.draw.rect(surf, GRAY, [x, y, CELL_SIDE, CELL_SIDE])
     (x_0, y_0) = fruit
     x_0 *= CELL_SIDE
     y_0 *= CELL_SIDE

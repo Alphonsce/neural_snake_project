@@ -5,7 +5,7 @@ import random
 
 class Fruit:
     """ Тип фрукта"""
-    def __init__(self, snakepose, snakehead):
+    def __init__(self, snakepose, snakehead, walls):
         """ Создание фрукта перебором возможных координат
         на вход подаются 
         snakepose - координаты частей хвоста
@@ -16,6 +16,9 @@ class Fruit:
             not_founded = False
             self.pos = (random.randint(0, FIELD_SIZE_W - 1), random.randint(0, FIELD_SIZE_H - 1))
             for item in snakepose:
+                if item == self.pos:
+                    not_founded = True
+            for item in walls:
                 if item == self.pos:
                     not_founded = True
             if snakehead == self.pos:
