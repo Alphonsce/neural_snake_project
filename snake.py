@@ -1,15 +1,10 @@
 import numpy
 import pygame
-#from pygame import display
-#from for_AI_snake.human_snake import Game_field
-
 
 from model import *
 from graphics import *
 from constans import *
 from agent import Learning_Agent as agent
-
-
 
 class Game_field:
     """ Собственно само независимое игровое поле"""
@@ -36,10 +31,7 @@ class Game_field:
         """ Обновление состояния поля """
         self.snake.move(self.fruit.get_pos())
         self.screen.fill((0, 0, 0))
-        self.screen.blit(draw_field(
-            self.screen, *self.snake.get_pos(), 
-            self.fruit.get_pos(), self.snake.get_step()
-            ), (0, 0))
+        self.screen.blit(draw_field(self.screen, self), (0, 0))
         if self.snake.alive == False:
             draw_text("Game Over", 50, WIDTH/2, HEIGHT/2 - 100, RED, self.screen)
             draw_text("press ECS", 50, WIDTH/2, HEIGHT/2, RED, self.screen)

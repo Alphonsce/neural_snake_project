@@ -121,7 +121,7 @@ def draw_start_menu(buttons, sliders, display):
     for slider in sliders:
         slider.draw(display)
 
-def draw_field(surf, snake_tail, snake_head, fruit, step):
+def draw_field(surf, gamefield):
     """ Функция рисует поле.
     Первоначльно она должна нарисовать темное поле
     Исходя из массива надо нарисовать квадратики в клеточках: 
@@ -136,6 +136,9 @@ def draw_field(surf, snake_tail, snake_head, fruit, step):
     Также для каждой части змеи надо сделать соединение между двумя клеточками -
     Салатовая, например(занимает 80% ширины или высоты клетки)
     """
+    snake_tail, snake_head = gamefield.snake.get_pos()
+    fruit = gamefield.fruit.pos
+    step = gamefield.snake.get_step()
     (x_0, y_0) = fruit
     x_0 *= CELL_SIDE
     y_0 *= CELL_SIDE
