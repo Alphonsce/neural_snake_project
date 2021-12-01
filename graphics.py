@@ -152,27 +152,47 @@ def draw_field(surf, gamefield):
     k = 0.5 * (1 - WIDTH_OF_TAIL)
     (x_0, y_0) = snake_head
     (x, y) = snake_tail[-1]
-    x_0 += step / FRAMES_PER_STEP * (x_0 - x)
-    y_0 += step / FRAMES_PER_STEP * (y_0 - y)
+    if int(abs(x - x_0) + abs(y - y_0)) == 1:
+        x_0 += step / FRAMES_PER_STEP * (x_0 - x)
+        y_0 += step / FRAMES_PER_STEP * (y_0 - y)
     pygame.draw.rect(surf, BLUE, (int(x_0 * CELL_SIDE), int(y_0 * CELL_SIDE), CELL_SIDE, CELL_SIDE))
-    for i in range(len(snake_tail) - 1):
+    for i in range(len(snake_tail)):
         (x, y) = snake_tail[-i - 1]
-        pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
-            int((min(x, x_0) + k) * CELL_SIDE),
-            int((min(y, y_0) + k) * CELL_SIDE),
-            int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
-            int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
+        if int(abs(x - x_0) + abs(y - y_0)) == 1:
+            if i == len(snake_tail) - 1:
+                x += step / FRAMES_PER_STEP * (x_0 - x)
+                y += step / FRAMES_PER_STEP * (y_0 - y)
+            pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
+                int((min(x, x_0) + k) * CELL_SIDE),
+                int((min(y, y_0) + k) * CELL_SIDE),
+                int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
+                int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
+            ))
+        else: 
+            """ Данный кусок кода является нечитабельным, так что читающему советуется поверить 
+            в то, что он правильно рисует перенос змеи на бесконечном поле, или взять бумагу и 
+            самому проверить справедливость формул во всех случаях
+            При этом я верю, что x, y , x_0, y_0 - целые числа 
+            """
+            assert int(x) == x, "x is not int"
+            assert int(y) == y, "y is not int"
+            assert int(x_0) == x_0, "x_0 is not int"
+            assert int(y_0) == y_0, "y_0 is not int"
+            pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
+                int(((-abs(x - x_0) // max(x, x_0, 1) + x * abs(y - y_0) // max(y, y_0, 1)) + k) * CELL_SIDE),
+                int(((y * abs(x - x_0) // max(x, x_0, 1) - abs(y - y_0) // max(y, y_0, 1)) + k) * CELL_SIDE),
+                int(CELL_SIDE * (1 + abs(x - x_0) // max(x, x_0, 1) - 2 * k)),
+                int(CELL_SIDE * (1 + abs(y - y_0) // max(y, y_0, 1) - 2 * k))
+            ))
+            pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
+                int(((abs(x - x_0) + x * abs(y - y_0) // max(y, y_0, 1)) + k) * CELL_SIDE),
+                int(((y * abs(x - x_0) // max(x, x_0, 1) + abs(y - y_0)) + k) * CELL_SIDE),
+                int(CELL_SIDE * (1 + abs(x - x_0) // max(x, x_0, 1) - 2 * k)),
+                int(CELL_SIDE * (1 + abs(y - y_0) // max(y, y_0, 1) - 2 * k))
             ))
         (x_0, y_0) = (x, y)
-    (x, y) = snake_tail[0]
     x += step / FRAMES_PER_STEP * (x_0 - x)
     y += step / FRAMES_PER_STEP * (y_0 - y)
-    pygame.draw.rect(surf, SNAKE_COLORS[(len(snake_tail) - 1) % len(SNAKE_COLORS)], (
-        int((min(x, x_0) + k) * CELL_SIDE),
-        int((min(y, y_0) + k) * CELL_SIDE),
-        int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
-        int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
-        ))
     return surf
 
 def draw_interface(surf, score):

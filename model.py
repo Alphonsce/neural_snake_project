@@ -35,7 +35,7 @@ class Snake:
         x, y - начальные координаты головы 
         gamefield - игровое поле, в котором змейка перемещается
         """
-        self.tail = [(x-1, y), (x-2, y)]
+        self.tail = [(x-2, y), (x-1, y)]
         self.head = (x, y)
         self.speed = (1, 0)
         self.direction = Direction.RIGHT
