@@ -13,10 +13,18 @@ from agent import Learning_Agent as agent
 
 class Game_field:
     """ Собственно само независимое игровое поле"""
-    def __init__(self, x):
+    def __init__(self, x, rule=1):
         """ При инициализации полю сразу передается координата 
         по которой будет данное поле выводиться на экран
         """
+        self.walls = []
+        if rule == 1: 
+            self.rule = Snake.standart_rule
+        elif rule == 2: 
+            self.rule = Snake.inf_field
+        elif rule == 3:
+            self.rule = Snake.walls
+            self.walls = []
         self.score = 0
         self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self)
         self.fruit = Fruit(*self.snake.get_pos())
@@ -59,10 +67,10 @@ class Game_field:
         """ На данном поле змея получает приказ повернуть направо"""
         self.snake.direction = Direction.RIGHT
 
-
-
 class AI_Game_field(Game_field):
-    def __init__(self, x, path_to_the_file_for_model='./model/learned_model.pth'):
+    def __init__(self, x, ai_dificalty):
+        path_to_the_file_for_model='./model/learned_model.pth'
+        #path_to_the_file_for_model=f'./model/learned_model{ai_dificalty}.pth'
         super().__init__(x)
         self.agent = agent()
         self.agent.model.load(path_to_the_file_for_model) 
@@ -106,7 +114,6 @@ class AI_Game_field(Game_field):
             return True
         return False
 
-
 class Game:
     """ Объект типа игра отвечает за дисплей и циклы игры
     Также отвечает за ввод и распределение гейммодов
@@ -117,6 +124,7 @@ class Game:
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.GAME_RUNNING = True
         self.back = False
+        self.ai_dificalty = 1
 
     def start_menu(self):
         """ Стартовое меню отвечает за выбор и распределение игровых модов """
@@ -136,7 +144,7 @@ class Game:
             for item in menu_buttons:
                 if item.check_pressed(x, y) and self.click:
                     item.func(*item.args)
-            draw_start_menu(menu_buttons, self.display)
+            draw_start_menu(menu_buttons, [], self.display)
             pygame.display.flip()
 
     def Ai_menu(self):
@@ -158,12 +166,11 @@ class Game:
                     item.func(*item.args)
             for item in sliders:
                 item.update(x)
-                item.draw(self.display)
                 if self.click:
                     item.check_press(x, y)
                 if self.unclick:
                     item.deactivate()
-            draw_start_menu(menu_buttons, self.display)
+            draw_start_menu(menu_buttons, sliders, self.display)
             draw_text("Dificalty", 30, WIDTH / 2, 640, WHITE, self.display)
             pygame.display.flip()
         self.back = False
@@ -171,8 +178,10 @@ class Game:
     def Player_menu(self):
         """ Меню Player отвечает за выбор модов из этого раздела"""
         menu_buttons = []
-        menu_buttons.append(Button("Player only",  WIDTH // 2, 300, 250, 55, self.mainloop, (["gamer"],)))
-        menu_buttons.append(Button("Learning",  WIDTH // 2 , 500, 250, 55, self.wait, ()))
+        sliders = []
+        menu_buttons.append(Button("Standart",  WIDTH // 2, 300, 250, 55, self.mainloop, (["gamer"], 1)))
+        menu_buttons.append(Button("Infinity",  WIDTH // 2, 400, 250, 55, self.mainloop, (["gamer"], 2)))
+        menu_buttons.append(Button("Walls",  WIDTH // 2 , 500, 250, 55, self.mainloop, (["gamer"], 3)))
         menu_buttons.append(Button("BACK",  WIDTH // 2 , 600, 250, 55, self.go_back, ()))
         while self.GAME_RUNNING and not self.back:
             x, y = pygame.mouse.get_pos()
@@ -182,11 +191,11 @@ class Game:
             for item in menu_buttons:
                 if item.check_pressed(x, y) and self.click:
                     item.func(*item.args)
-            draw_start_menu(menu_buttons, self.display)
+            draw_start_menu(menu_buttons, sliders, self.display)
             pygame.display.flip()
         self.back = False
 
-    def mainloop(self, fields: list):
+    def mainloop(self, fields: list, rule=1):
         """ Основной цикл игры.
         На вход подается модель запускаемой игры.
         В fields передается тип игроков
@@ -199,10 +208,10 @@ class Game:
         self.display = pygame.display.set_mode((len(fields) * WIDTH, HEIGHT))
         for i in range(len(fields)):
             if fields[i] == "gamer":
-                game_field = Game_field(i * WIDTH)
+                game_field = Game_field(i * WIDTH, rule)
                 self.gamer = game_field
             if fields[i] == "AI":
-                game_field = AI_Game_field(i * WIDTH)
+                game_field = AI_Game_field(i * WIDTH, self.ai_dificalty)
             self.game_fields.append(game_field)
         while self.GAME_RUNNING:
             self.clock.tick(FPS)

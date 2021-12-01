@@ -53,22 +53,47 @@ class Snake:
                 Vx, Vy = self.speed
             self.step = 0
             x, y = self.head 
-            if not(0 <= (x + Vx) < FIELD_SIZE_W and 0 <= (y + Vy) < FIELD_SIZE_H):
+            x_new, y_new = self.gamefield.rule(self, x + Vx, y + Vy)
+            if self.alive:
+                self.tail.append(self.head)
+                self.head = (x_new, y_new)
+                if fruit != (x_new, y_new):
+                    self.tail.pop(0)
+                else:
+                    self.gamefield.new_fruit()
+
+    def standart_rule(self, x_new, y_new):
+        if not(0 <= x_new < FIELD_SIZE_W and 0 <= y_new < FIELD_SIZE_H):
+            self.speed = (0, 0)
+            self.alive = False
+        else:
+            for part in self.tail[1:]:
+                if part == (x_new, y_new):
+                    self.speed = (0, 0)
+                    self.alive = False
+        return x_new, y_new
+
+    def inf_field(self, x_new, y_new):
+        x_new %= FIELD_SIZE_W 
+        y_new %= FIELD_SIZE_H
+        for part in self.tail[1:]:
+            if part == (x_new, y_new):
                 self.speed = (0, 0)
                 self.alive = False
-            else:
-                for part in self.tail[1:]:
-                    if part == (x + Vx, y + Vy):
-                        self.speed = (0, 0)
-                        self.alive = False
-                if self.alive:
-                    self.tail.append(self.head)
-                    self.head = (x + Vx, y + Vy)
-                    if fruit != (x + Vx, y + Vy):
-                        self.tail.pop(0)
-                    else:
-                        self.gamefield.new_fruit()
+        return x_new, y_new
 
+    def walls(self, x_new, y_new):
+        x_new %= FIELD_SIZE_W 
+        y_new %= FIELD_SIZE_H
+        for part in self.tail[1:]:
+            if part == (x_new, y_new):
+                self.speed = (0, 0)
+                self.alive = False
+        for part in self.gamefield.walls:
+            if part == (x_new, y_new):
+                self.speed = (0, 0)
+                self.alive = False
+        return x_new, y_new
 
     def get_pos(self):
         """ Возвращает положения частей хвоста и головы"""

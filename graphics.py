@@ -48,7 +48,7 @@ class Slider():
         x - координата х мыши
         """
         if self.active:
-            self.pos = self.start + int((x - self.x + self.w)/(2 * self.w) *
+            self.pos = self.start + int(self.step / 2 + (x - self.x + self.w)/(2 * self.w) *
             (self.end - self.start))//self.step * self.step
             if self.pos > self.end:
                 self.pos = self.end
@@ -105,7 +105,7 @@ class Button():
         pygame.draw.rect(display, col, (self.x - 0.5 * self.width, self.y - 0.5 * self.height, self.width, self.height))
         display.blit(text, (self.x - 0.5 * rect.width, self.y - 0.5 * rect.height))
 
-def draw_start_menu(buttons, display):
+def draw_start_menu(buttons, sliders, display):
     """ На стартовом экране Не должно быть видно будущего поля.
     На дисплей должно выводиться Меню с кнопками типа Button:
     Эти кнопки лежат в массиве buttons
@@ -118,6 +118,8 @@ def draw_start_menu(buttons, display):
     display.blit(name, (0.5 * (WIDTH - name_rect.width), 90))
     for button in buttons:
         button.draw_button(display)
+    for slider in sliders:
+        slider.draw(display)
 
 def draw_field(surf, snake_tail, snake_head, fruit, step):
     """ Функция рисует поле.
