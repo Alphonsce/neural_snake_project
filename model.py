@@ -2,9 +2,10 @@ from constans import *
 import random
 
 
+
 class Fruit:
     """ Тип фрукта"""
-    def __init__(self, snakepose, snakehead):
+    def __init__(self, snakepose, snakehead, walls):
         """ Создание фрукта перебором возможных координат
         на вход подаются 
         snakepose - координаты частей хвоста
@@ -15,6 +16,9 @@ class Fruit:
             not_founded = False
             self.pos = (random.randint(0, FIELD_SIZE_W - 1), random.randint(0, FIELD_SIZE_H - 1))
             for item in snakepose:
+                if item == self.pos:
+                    not_founded = True
+            for item in walls:
                 if item == self.pos:
                     not_founded = True
             if snakehead == self.pos:
@@ -31,7 +35,7 @@ class Snake:
         x, y - начальные координаты головы 
         gamefield - игровое поле, в котором змейка перемещается
         """
-        self.tail = [(x-1, y), (x-2, y)]
+        self.tail = [(x-2, y), (x-1, y)]
         self.head = (x, y)
         self.speed = (1, 0)
         self.direction = Direction.RIGHT
@@ -52,37 +56,47 @@ class Snake:
                 Vx, Vy = self.speed
             self.step = 0
             x, y = self.head 
-            if not(0 <= (x + Vx) < FIELD_SIZE_W and 0 <= (y + Vy) < FIELD_SIZE_H):
+            x_new, y_new = self.gamefield.rule(self, x + Vx, y + Vy)
+            if self.alive:
+                self.tail.append(self.head)
+                self.head = (x_new, y_new)
+                if fruit != (x_new, y_new):
+                    self.tail.pop(0)
+                else:
+                    self.gamefield.new_fruit()
+
+    def standart_rule(self, x_new, y_new):
+        if not(0 <= x_new < FIELD_SIZE_W and 0 <= y_new < FIELD_SIZE_H):
+            self.speed = (0, 0)
+            self.alive = False
+        else:
+            for part in self.tail[1:]:
+                if part == (x_new, y_new):
+                    self.speed = (0, 0)
+                    self.alive = False
+        return x_new, y_new
+
+    def inf_field(self, x_new, y_new):
+        x_new %= FIELD_SIZE_W 
+        y_new %= FIELD_SIZE_H
+        for part in self.tail[1:]:
+            if part == (x_new, y_new):
                 self.speed = (0, 0)
                 self.alive = False
-            else:
-                for part in self.tail[1:]:
-                    if part == (x + Vx, y + Vy):
-                        self.speed = (0, 0)
-                        self.alive = False
-                if self.alive:
-                    if fruit != (x + Vx, y + Vy):
-                        self.tail.pop(0)
-                    else:
-                        self.gamefield.new_fruit()
-                    self.tail.append(self.head)
-                    self.head = (x + Vx, y + Vy)
-                
-    def up(self):
-        """ Попытка поворта наверх"""
-        self.direction = (0, -1)
+        return x_new, y_new
 
-    def down(self):
-        """ Попытка поворта вниз"""
-        self.direction = (0, 1)
-
-    def left(self):
-        """ Попытка поворта налево"""
-        self.direction = (-1, 0)
-            
-    def right(self):
-        """ Попытка поворта направо"""
-        self.direction = (1, 0)
+    def walls(self, x_new, y_new):
+        x_new %= FIELD_SIZE_W 
+        y_new %= FIELD_SIZE_H
+        for part in self.tail[1:]:
+            if part == (x_new, y_new):
+                self.speed = (0, 0)
+                self.alive = False
+        for part in self.gamefield.walls:
+            if part == (x_new, y_new):
+                self.speed = (0, 0)
+                self.alive = False
+        return x_new, y_new
 
     def get_pos(self):
         """ Возвращает положения частей хвоста и головы"""

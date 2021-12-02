@@ -34,14 +34,34 @@ FPS = 60
 FRAMES_PER_STEP = 6
 
 class Direction(Enum):
+    def __eq__(self, other):
+        if self.value == other.value:
+            return True
+        return False
+
     RIGHT = (1, 0)
     LEFT = (-1, 0)
     UP = (0, -1)
     DOWN = (0, 1)
 
-# Пока что не используемый нами блок
-class Cell(Enum):
-    Empty = 0
-    Snake = 1
-    Snake_head = 2
-    Fruit = 3
+WALL_MAP = [
+    [*((0, x) for x in range(0, 25, 1)), *((24, x) for x in range(0, 25, 1)), 
+    *((x, 0) for x in range(0, 8, 1)), *((x, 0) for x in range(17, 25, 1)),
+    *((x, 24) for x in range(0, 8, 1)), *((x, 24) for x in range(17, 25, 1)),
+    *((x, 8) for x in range(8, 17, 1)), *((x, 17) for x in range(8, 17, 1)) 
+    ],
+    [*((0, x) for x in range(0, 8, 1)), *((0, x) for x in range(17, 25, 1)), 
+    *((24, x) for x in range(0, 8, 1)), *((24, x) for x in range(17, 25, 1)),
+    *((x, 0) for x in range(0, 8, 1)), *((x, 0) for x in range(17, 25, 1)),
+    *((x, 24) for x in range(0, 8, 1)), *((x, 24) for x in range(17, 25, 1)),
+    *((x, 8) for x in range(8, 17, 1)), *((x, 17) for x in range(8, 17, 1)), 
+    *((8, x) for x in range(8, 17, 1))
+    ],
+    [*((x, 15) for x in range(0, 25, 1)), *((18, x) for x in range(15, 25, 1)), 
+    *((x, 0) for x in range(5, 16, 1)), *((x, 10) for x in range(0, 14, 1)),
+    *((x, 10) for x in range(20, 25, 1)), *((12, x) for x in range(0, 10, 1)),
+    *((x, 0) for x in range(0, 2, 1)), *((0, x) for x in range(1, 2, 1)) 
+    ]
+]
+
+

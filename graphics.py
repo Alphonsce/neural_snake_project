@@ -48,7 +48,7 @@ class Slider():
         x - координата х мыши
         """
         if self.active:
-            self.pos = self.start + int((x - self.x + self.w)/(2 * self.w) *
+            self.pos = self.start + int(self.step / 2 + (x - self.x + self.w)/(2 * self.w) *
             (self.end - self.start))//self.step * self.step
             if self.pos > self.end:
                 self.pos = self.end
@@ -59,14 +59,17 @@ class Slider():
         self.active = False
         self.colour = ORANGE
 
-
 class Button():
-    def __init__(self, text, x, y, w, h) -> None:
+    def __init__(self, text, x, y, w, h, func, args) -> None:
         """ Класс кнопка. При создании получает входные:
         text - надпись на кнопке
         x, y - положение кнопки
         w, h - ширина и высота кнопки
+        func - функция которую выполнит кнопка
+        args - аргументы функции :tuple
         """
+        self.func = func
+        self.args = args
         self.text = text
         font = pygame.font.SysFont(TEXT_FONT, 50)
         self.t = font.render(text, True, BLACK)
@@ -102,7 +105,7 @@ class Button():
         pygame.draw.rect(display, col, (self.x - 0.5 * self.width, self.y - 0.5 * self.height, self.width, self.height))
         display.blit(text, (self.x - 0.5 * rect.width, self.y - 0.5 * rect.height))
 
-def draw_start_menu(buttons, display):
+def draw_start_menu(buttons, sliders, display):
     """ На стартовом экране Не должно быть видно будущего поля.
     На дисплей должно выводиться Меню с кнопками типа Button:
     Эти кнопки лежат в массиве buttons
@@ -115,8 +118,10 @@ def draw_start_menu(buttons, display):
     display.blit(name, (0.5 * (WIDTH - name_rect.width), 90))
     for button in buttons:
         button.draw_button(display)
+    for slider in sliders:
+        slider.draw(display)
 
-def draw_field(surf, snake_tail, snake_head, fruit, step):
+def draw_field(surf, gamefield):
     """ Функция рисует поле.
     Первоначльно она должна нарисовать темное поле
     Исходя из массива надо нарисовать квадратики в клеточках: 
@@ -131,6 +136,15 @@ def draw_field(surf, snake_tail, snake_head, fruit, step):
     Также для каждой части змеи надо сделать соединение между двумя клеточками -
     Салатовая, например(занимает 80% ширины или высоты клетки)
     """
+    snake_tail, snake_head = gamefield.snake.get_pos()
+    fruit = gamefield.fruit.pos
+    step = gamefield.snake.get_step()
+    walls = gamefield.walls
+    for item in walls:
+        x, y = item
+        x *= CELL_SIDE
+        y *= CELL_SIDE
+        pygame.draw.rect(surf, GRAY, [x, y, CELL_SIDE, CELL_SIDE])
     (x_0, y_0) = fruit
     x_0 *= CELL_SIDE
     y_0 *= CELL_SIDE
@@ -138,27 +152,47 @@ def draw_field(surf, snake_tail, snake_head, fruit, step):
     k = 0.5 * (1 - WIDTH_OF_TAIL)
     (x_0, y_0) = snake_head
     (x, y) = snake_tail[-1]
-    x_0 += step / FRAMES_PER_STEP * (x_0 - x)
-    y_0 += step / FRAMES_PER_STEP * (y_0 - y)
+    if int(abs(x - x_0) + abs(y - y_0)) == 1:
+        x_0 += step / FRAMES_PER_STEP * (x_0 - x)
+        y_0 += step / FRAMES_PER_STEP * (y_0 - y)
     pygame.draw.rect(surf, BLUE, (int(x_0 * CELL_SIDE), int(y_0 * CELL_SIDE), CELL_SIDE, CELL_SIDE))
-    for i in range(len(snake_tail) - 1):
+    for i in range(len(snake_tail)):
         (x, y) = snake_tail[-i - 1]
-        pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
-            int((min(x, x_0) + k) * CELL_SIDE),
-            int((min(y, y_0) + k) * CELL_SIDE),
-            int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
-            int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
+        if int(abs(x - x_0) + abs(y - y_0)) == 1:
+            if i == len(snake_tail) - 1:
+                x += step / FRAMES_PER_STEP * (x_0 - x)
+                y += step / FRAMES_PER_STEP * (y_0 - y)
+            pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
+                int((min(x, x_0) + k) * CELL_SIDE),
+                int((min(y, y_0) + k) * CELL_SIDE),
+                int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
+                int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
+            ))
+        else: 
+            """ Данный кусок кода является нечитабельным, так что читающему советуется поверить 
+            в то, что он правильно рисует перенос змеи на бесконечном поле, или взять бумагу и 
+            самому проверить справедливость формул во всех случаях
+            При этом я верю, что x, y , x_0, y_0 - целые числа 
+            """
+            assert int(x) == x, "x is not int"
+            assert int(y) == y, "y is not int"
+            assert int(x_0) == x_0, "x_0 is not int"
+            assert int(y_0) == y_0, "y_0 is not int"
+            pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
+                int(((-abs(x - x_0) // max(x, x_0, 1) + x * abs(y - y_0) // max(y, y_0, 1)) + k) * CELL_SIDE),
+                int(((y * abs(x - x_0) // max(x, x_0, 1) - abs(y - y_0) // max(y, y_0, 1)) + k) * CELL_SIDE),
+                int(CELL_SIDE * (1 + abs(x - x_0) // max(x, x_0, 1) - 2 * k)),
+                int(CELL_SIDE * (1 + abs(y - y_0) // max(y, y_0, 1) - 2 * k))
+            ))
+            pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
+                int(((abs(x - x_0) + x * abs(y - y_0) // max(y, y_0, 1)) + k) * CELL_SIDE),
+                int(((y * abs(x - x_0) // max(x, x_0, 1) + abs(y - y_0)) + k) * CELL_SIDE),
+                int(CELL_SIDE * (1 + abs(x - x_0) // max(x, x_0, 1) - 2 * k)),
+                int(CELL_SIDE * (1 + abs(y - y_0) // max(y, y_0, 1) - 2 * k))
             ))
         (x_0, y_0) = (x, y)
-    (x, y) = snake_tail[0]
     x += step / FRAMES_PER_STEP * (x_0 - x)
     y += step / FRAMES_PER_STEP * (y_0 - y)
-    pygame.draw.rect(surf, SNAKE_COLORS[(len(snake_tail) - 1) % len(SNAKE_COLORS)], (
-        int((min(x, x_0) + k) * CELL_SIDE),
-        int((min(y, y_0) + k) * CELL_SIDE),
-        int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
-        int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
-        ))
     return surf
 
 def draw_interface(surf, score):
