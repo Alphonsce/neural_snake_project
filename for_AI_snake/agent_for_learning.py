@@ -2,12 +2,16 @@ import torch
 import torch.nn as nn
 import numpy as np
 import pygame
+import matplotlib.pyplot as plt
+from IPython import display
 import random
 from collections import deque
 
 from AI_snake import AI_Game
 from AI_constans import *
 from training_model import *
+
+plt.ion()
 
 
 class Learning_Agent:
@@ -127,7 +131,10 @@ class Learning_Agent:
 def training_process():
     '''Функция, которая запускает само обучение нейронной сети,
     '''
-    
+    scores = [0]
+    mean_scores = [0]
+    draw_graph(scores, mean_scores)
+
     best_score = 0
     agent = Learning_Agent()
     game = AI_Game()
@@ -146,8 +153,14 @@ def training_process():
 
         # когда закончилась игра делаем обучение на всей памяти
         if game_over:
+            scores = np.append(scores, score)
+
             game.reset()
             agent.number_of_games += 1
+
+            mean_scores = np.append(mean_scores, np.sum(scores) / agent.number_of_games)
+            draw_graph(scores, mean_scores)
+
             agent.long_memory_train()
 
             if score > best_score:
@@ -156,14 +169,10 @@ def training_process():
             
             print('game:', agent.number_of_games, 'score:', score)
 
-
 def running_learned_snake(path_to_the_file_for_model='./model/learned_model.pth'):
     '''функция, которая запускает просто визуализацию игры уже обученной змейки
     path_to_the_file_for_model - путь к файлу с обученной моделью
     '''
-    scores = []
-    avg_scores = []
-    total_score = 0
     best_score = 0
 
     agent = Learning_Agent()
@@ -185,6 +194,27 @@ def running_learned_snake(path_to_the_file_for_model='./model/learned_model.pth'
                 best_score = score
             
             print('game:', agent.number_of_games, 'score:', score)
+
+
+def draw_graph(scores, mean_scores):
+    '''функция для отрисовки графика обучения
+    '''
+    #ticks = np.arange(len(scores))
+    plt.clf()
+    #plt.xticks(ticks)
+    plt.text(len(scores) - 1, scores[-1], str(scores[-1]))     # пишет возле графика со scores какой последний score
+    plt.text(len(scores) - 1, mean_scores[-1], str(round(mean_scores[-1], 3)))        # пишет mean_score возле графика со средними
+
+    plt.xlabel('Количество игр')
+    plt.ylabel('Набранные очки')
+
+    plt.plot(scores, label='Очки')
+    plt.plot(mean_scores, label='Среднее')
+    plt.legend(loc='upper left', fontsize=10)
+    plt.ylim(ymin=0)
+
+    plt.show()
+    plt.pause(0.1)
 
 
 if __name__ == '__main__':
