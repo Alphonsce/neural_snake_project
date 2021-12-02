@@ -60,9 +60,9 @@ class Game_field:
         self.snake.direction = Direction.RIGHT
 
 class AI_Game_field(Game_field):
-    def __init__(self, x, ai_dificalty):
+    def __init__(self, x, ai_difficulty):
         path_to_the_file_for_model='./model/learned_model.pth'
-        #path_to_the_file_for_model=f'./model/learned_model{ai_dificalty}.pth'
+        #path_to_the_file_for_model=f'./model/learned_model{ai_difficulty}.pth'
         super().__init__(x)
         self.agent = agent()
         self.agent.model.load(path_to_the_file_for_model) 
@@ -116,7 +116,7 @@ class Game:
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         self.GAME_RUNNING = True
         self.back = False
-        self.ai_dificalty = 1
+        self.ai_difficulty = 1
         self.wall_map = 1
 
     def start_menu(self):
@@ -164,7 +164,7 @@ class Game:
                 if self.unclick:
                     item.deactivate()
             draw_start_menu(menu_buttons, sliders, self.display)
-            draw_text("Dificalty", 30, WIDTH / 2, 640, WHITE, self.display)
+            draw_text("difficulty", 30, WIDTH / 2, 640, WHITE, self.display)
             pygame.display.flip()
         self.back = False
 
@@ -212,7 +212,7 @@ class Game:
                 game_field = Game_field(i * WIDTH, rule, self.wall_map)
                 self.gamer = game_field
             if fields[i] == "AI":
-                game_field = AI_Game_field(i * WIDTH, self.ai_dificalty)
+                game_field = AI_Game_field(i * WIDTH, self.ai_difficulty)
             self.game_fields.append(game_field)
         while self.GAME_RUNNING:
             self.clock.tick(FPS)
