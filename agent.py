@@ -132,13 +132,12 @@ class AI_Game:
         self.walls = []
         self.reset()
         self.GAME_RUNNING = True
-        self.step = 0
 
     def reset(self):
         '''здесь находятся все параметры для инициализации игры заново'''
         self.frame_number = 0
         self.score = 0
-        self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self)
+        self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self, mode="learning")
         self.fruit = Fruit(*self.snake.get_pos(), self.walls)
         self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
 
@@ -203,12 +202,9 @@ class AI_Game:
         '''
         self.reward = 0
         self.frame_number += 1
-        self.step += 1
-        self.clock.tick(FPS * 10)
-        if self.step == 3:
-            self.step = 1
-            self.display.fill((0, 0, 0))
-            self.update_drawing()
+        self.clock.tick(FPS * 2)
+        self.display.fill((0, 0, 0))
+        self.update_drawing()
 
         old_score = self.score
         self.direction_from_action(action)
