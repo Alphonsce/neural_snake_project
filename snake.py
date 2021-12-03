@@ -129,7 +129,7 @@ class Game:
         menu_buttons = []
         menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 55, self.Player_menu, ()))
         menu_buttons.append(Button("AI mod",  WIDTH // 2, 400, 250, 55, self.Ai_menu, ()))
-        menu_buttons.append(Button("PvP",  WIDTH // 2, 500, 250, 55, self.wait, ()))
+        menu_buttons.append(Button("PvP",  WIDTH // 2, 500, 250, 55, self.VS_mod, ()))
         menu_buttons.append(Button("Settings",  WIDTH // 2, 600, 250, 55, self.wait, ()))
         menu_buttons.append(Button("EXIT",  WIDTH // 2 , 700, 250, 55, self.quit_game, ()))
         while self.GAME_RUNNING:
@@ -283,10 +283,8 @@ class Game:
         self.back = True
 
     def VS_mod(self):
-        snakeVS.GameVS(self).start_menu()
+        self.GAME_RUNNING = snakeVS.GameVS(self).start_menu()
 
-    def quit_game(self):
-        self.GAME_RUNNING = False
 
 
 def main():

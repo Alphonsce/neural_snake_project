@@ -19,17 +19,43 @@ serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serv.bind(("", 11002))
 serv.listen(10) 
 
+class Gamer:
+    def __init__(self, client, addr, game) -> None:
+        self.client = client
+        self.addr = addr
+        self.game = game
+        self.new_snake()
+        self.score = 0
+        self.current_score = 0
+        self.deaths = 0
+
+    def update(self):
+        self.snake.move()
+
+    def death(self):
+        self.deaths += 1
+        self.score += self.current_score
+        self.current_score = 0
+        self.new_snake()
+
+    def new_snake(self):
+        pass
+
 class Server:
     def __init__(self, Num_of_players) -> None:
         self.serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.serv.bind(("", 11002))
         self.serv.listen(Num_of_players) 
-        self.cliets = []
-        self.addrs = []
+        self.gamers = []
+
+    
+
+    def join(self):
+        client, addr = serv.accept()
+        self.gamers.append(Gamer(client, addr, self))
 
     def update(self):
-        client, addr = serv.accept()
-        self.cliets.append(client)
-        self.addrs.append(addr)
+        pass
+
 
 
