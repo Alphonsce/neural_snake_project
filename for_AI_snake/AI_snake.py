@@ -29,7 +29,7 @@ class Fruit:
                 
 
 class Snake:
-    def __init__(self, x, y, gamefield):
+    def __init__(self, x, y, gamefield, mode="normal"):
         self.tail = [(x - 1, y), (x - 2, y)]
         self.head = (x, y)
         self.speed = (1, 0)
@@ -37,6 +37,9 @@ class Snake:
         self.step = 0
         self.gamefield = gamefield
         self.direction = Direction.RIGHT
+        self.fpstep = FRAMES_PER_STEP
+        if mode == "learning":
+            self.fpstep = 1
 
     def move(self, fruit_coords):
         """ Отвечает за перемещение змеи
@@ -48,7 +51,7 @@ class Snake:
 
         if self.alive:
             self.step += 1
-        if self.step >= FRAMES_PER_STEP:
+        if self.step >= self.fpstep:
             self.step = 0
             x, y = self.head 
             Vx, Vy = self.direction.value
@@ -87,7 +90,7 @@ class AI_Game:
         '''здесь находятся все параметры для инициализации игры заново'''
         self.frame_number = 0
         self.score = 0
-        self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self)
+        self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self, "learning")
         self.fruit = Fruit(*self.snake.get_pos())
         self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
 
