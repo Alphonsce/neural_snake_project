@@ -3,7 +3,6 @@ import torch.nn as nn
 import numpy as np
 import pygame
 import matplotlib.pyplot as plt
-from IPython import display
 import random
 from collections import deque
 
