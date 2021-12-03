@@ -7,7 +7,6 @@ from collections import deque
 import matplotlib.pyplot as plt
 
 from model import *
-from graphics import *
 from constans import *
 from for_AI_snake.training_model import *
 
@@ -133,6 +132,7 @@ class AI_Game:
         self.walls = []
         self.reset()
         self.GAME_RUNNING = True
+        self.step = 0
 
     def reset(self):
         '''здесь находятся все параметры для инициализации игры заново'''
@@ -144,8 +144,9 @@ class AI_Game:
 
     def update_drawing(self):
         self.screen.fill((0, 0, 0))
-        self.screen.blit(draw_field(
-            self.screen, self
+        self.screen.blit(draw_field_AI(
+            self.screen, *self.snake.get_pos(), 
+            self.fruit.pos
             ), (0, 0))
 
     def is_looped(self):
@@ -202,10 +203,12 @@ class AI_Game:
         '''
         self.reward = 0
         self.frame_number += 1
-
-        self.clock.tick(FPS * FRAMES_PER_STEP)
-        self.display.fill((0, 0, 0))
-        self.update_drawing()
+        self.step += 1
+        self.clock.tick(FPS * 10)
+        if self.step == 3:
+            self.step = 1
+            self.display.fill((0, 0, 0))
+            self.update_drawing()
 
         old_score = self.score
         self.direction_from_action(action)
@@ -287,6 +290,36 @@ def training_process():
                 agent.model.save()
             
             print('game:', agent.number_of_games, 'score:', score)
-    plt.ioff()
     plt.close("all")
     
+def draw_field_AI(surf, snake_tail, snake_head, fruit):
+    """ Функция рисует поле.
+    Первоначльно она должна нарисовать темное поле
+    Исходя из массива надо нарисовать квадратики в клеточках: 
+    surf - Поле на котором надо нарисовать.
+    cells - массив чисел. Соответствия устанавливаются с помощью 
+    класса Cell в модуле constans
+    Фрукт - красный (занимает 80% ширины и высоты клетки)
+    Змея - зеленая (занимает 80% ширины и высоты клетки)
+    Голова - Зеленая (занимает 100% ширины и высоты клетки)
+    Также для каждой части змеи надо сделать соединение между двумя клеточками -
+    Салатовая, например(занимает 80% ширины или высоты клетки)
+    """
+    (x_0, y_0) = fruit
+    x_0 *= CELL_SIDE
+    y_0 *= CELL_SIDE
+    pygame.draw.rect(surf, RED, (x_0, y_0, CELL_SIDE, CELL_SIDE))
+    k = 0.5 * (1 - WIDTH_OF_TAIL)
+    (x_0, y_0) = snake_head
+    (x, y) = snake_tail[-1]
+    pygame.draw.rect(surf, BLUE, (int(x_0 * CELL_SIDE), int(y_0 * CELL_SIDE), CELL_SIDE, CELL_SIDE))
+    for i in range(len(snake_tail)):
+        (x, y) = snake_tail[-i - 1]
+        pygame.draw.rect(surf, BLUE, (
+            int((min(x, x_0) + k) * CELL_SIDE),
+            int((min(y, y_0) + k) * CELL_SIDE),
+            int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
+            int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
+            ))
+        (x_0, y_0) = (x, y)
+    return surf

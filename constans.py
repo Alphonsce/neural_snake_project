@@ -40,7 +40,7 @@ WIDTH_OF_TAIL = 0.8 #коэффициент толщины для рисовки
 #Количество обработок в секунду
 FPS = 60
 # По факту задает скорость змеи. V * FRAMES_PER_STEP = FPS
-FRAMES_PER_STEP = 6
+FRAMES_PER_STEP = 1
 
 class Direction(Enum):
     def __eq__(self, other):
