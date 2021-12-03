@@ -5,6 +5,7 @@ from model import *
 from graphics import *
 from constans import *
 from agent import Learning_Agent as agent
+from agent import training_process
 
 class Game_field:
     """ Собственно само независимое игровое поле"""
@@ -145,7 +146,7 @@ class Game:
         menu_buttons = []
         menu_buttons.append(Button("AI only",  WIDTH // 2, 300, 250, 55, self.mainloop, (["AI"],)))
         menu_buttons.append(Button("AI VS Player",  WIDTH // 2, 400, 250, 55, self.mainloop, (["AI", "gamer"],)))
-        menu_buttons.append(Button("Learning",  WIDTH // 2 , 500, 250, 55, self.wait, ()))
+        menu_buttons.append(Button("Learning",  WIDTH // 2 , 500, 250, 55, self.learning_visualisation, ()))
         menu_buttons.append(Button("BACK",  WIDTH // 2 , 600, 250, 55, self.go_back, ()))
         sliders = []
         sliders.append(Slider(WIDTH / 2, 700, 250, (1, 5, 1)))
@@ -278,6 +279,11 @@ class Game:
 
     def go_back(self):
         self.back = True
+
+    def learning_visualisation(self):
+        pygame.display.quit()
+        training_process()
+        self.display = pygame.display.set_mode((WIDTH, HEIGHT))
 
 def main():
     Game().start_menu()

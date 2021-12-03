@@ -4,9 +4,14 @@ import numpy as np
 import pygame
 import random
 from collections import deque
+import matplotlib.pyplot as plt
 
-from for_AI_snake.AI_constans import *
+from model import *
+from graphics import *
+from constans import *
 from for_AI_snake.training_model import *
+
+plt.ion()
 
 class Learning_Agent:
     '''Агент - это то, что управляет игрой, 
@@ -119,4 +124,169 @@ class Learning_Agent:
         
         return final_action
 
+class AI_Game:
+    def __init__(self):
+        self.rule = Snake.standart_rule
+        self.clock = pygame.time.Clock()
+        self.display = pygame.display.set_mode((WIDTH, HEIGHT))
+        # field init:
+        self.walls = []
+        self.reset()
+        self.GAME_RUNNING = True
 
+    def reset(self):
+        '''здесь находятся все параметры для инициализации игры заново'''
+        self.frame_number = 0
+        self.score = 0
+        self.snake = Snake(FIELD_SIZE_W // 2, FIELD_SIZE_H // 2, self)
+        self.fruit = Fruit(*self.snake.get_pos(), self.walls)
+        self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
+
+    def update_drawing(self):
+        self.screen.fill((0, 0, 0))
+        self.screen.blit(draw_field(
+            self.screen, self
+            ), (0, 0))
+
+    def is_looped(self):
+        ''' проверка на то что агент стал циклить одно движение,
+        self.frame_number после собирания фрукта обновляется внутри new_fruit
+        '''
+        if self.frame_number > WAITING_CONSTANT * (len(self.snake.tail) + 1):
+            self.snake.alive = False
+
+    def will_be_dead(self, point):
+        '''функция, которая показывает по переданной ей координате точки,
+        будет ли игра проиграна, если этой точкой будет голова
+        '''
+        x, y = point
+
+        # смерть об стены:
+        if x >= FIELD_SIZE_W or y >= FIELD_SIZE_H:
+            return True
+        # смерть об хвост:
+        if (x, y) in self.snake.tail:
+            return True
+        return False
+
+
+    def direction_from_action(self, action=[0, 1, 0]):
+        '''
+        метод позволяет исходя из action получить direction движения змейки,
+        action при этом предсказывается нейронной сетью
+        
+        '''
+        directions_order = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
+        current_direction_order = directions_order.index(self.snake.direction)
+        new_direction_order = current_direction_order + 0
+        if np.array_equal(action, [0, 1, 0]):
+            new_direction_order = current_direction_order
+        elif np.array_equal(action, [0, 0, 1]):
+            new_direction_order = (current_direction_order + 1) % 4
+        else:       # если None остается пока agent.get_action() не сделан, то будет влево крутить
+            new_direction_order = (current_direction_order - 1) % 4
+
+        self.snake.direction = directions_order[new_direction_order]           
+
+    def new_fruit(self):
+        self.frame_number = 0
+        self.fruit = Fruit(*self.snake.get_pos(), self.walls)
+        self.score += 1
+
+    def mainloop_step(self, action=[0, 1, 0]):
+        '''Теперь предсказанный action передается сюда,
+        затем он передается в move, а потом исходя из action, 
+        смотрится direction и выбирается скорость и змейка смещается
+
+        reward назначается за каждый отдельный ход
+        '''
+        self.reward = 0
+        self.frame_number += 1
+
+        self.clock.tick(FPS * FRAMES_PER_STEP)
+        self.display.fill((0, 0, 0))
+        self.update_drawing()
+
+        old_score = self.score
+        self.direction_from_action(action)
+        self.snake.move(self.fruit.pos)
+        new_score = self.score
+
+        self.is_looped()
+        if new_score - old_score > 0:
+            self.reward = 5
+        elif not self.snake.alive:
+            self.reward = -5
+        pygame.draw.rect(self.display, GRAY, [0, 0, WIDTH, BAR_HEIGHT])
+        self.display.blit(self.screen, (0, BAR_HEIGHT))
+        pygame.display.flip()
+        for event in pygame.event.get():
+            self.frame_number += 1
+            if event.type == pygame.QUIT:
+                self.GAME_RUNNING = False
+        return self.reward, not self.snake.alive, self.score
+
+
+def draw_graph(scores, mean_scores):
+    '''функция для отрисовки графика обучения
+    '''
+    #ticks = np.arange(len(scores))
+    plt.clf()
+    #plt.xticks(ticks)
+    plt.text(len(scores) - 1, scores[-1], str(scores[-1]))     # пишет возле графика со scores какой последний score
+    plt.text(len(scores) - 1, mean_scores[-1], str(round(mean_scores[-1], 3)))        # пишет mean_score возле графика со средними
+
+    plt.xlabel('Количество игр')
+    plt.ylabel('Набранные очки')
+
+    plt.plot(scores, label='Очки')
+    plt.plot(mean_scores, label='Среднее')
+    plt.legend(loc='upper left', fontsize=10)
+    plt.ylim(ymin=0)
+
+    plt.show()
+    plt.pause(0.1)
+
+def training_process():
+    '''Функция, которая запускает само обучение нейронной сети,
+    '''
+    scores = [0]
+    mean_scores = [0]
+    draw_graph(scores, mean_scores)
+
+    best_score = 0
+    agent = Learning_Agent()
+    game = AI_Game()
+    while game.GAME_RUNNING:
+        old_state = agent.get_state(game)
+
+        move = agent.get_action(old_state)
+
+        reward, game_over, score = game.mainloop_step(move)     # 1 сдвиг змейки и получение результатов этого сдвига
+
+        new_state = agent.get_state(game)
+
+        # обучение для 1 итерации:
+        agent.short_memory_train(old_state, move, reward, new_state, game_over)
+        agent.add_to_memory(old_state, move, reward, new_state, game_over)
+
+        # когда закончилась игра делаем обучение на всей памяти
+        if game_over:
+            scores = np.append(scores, score)
+
+            game.reset()
+            agent.number_of_games += 1
+
+            mean_scores = np.append(mean_scores, np.sum(scores) / agent.number_of_games)
+            draw_graph(scores, mean_scores)
+
+            agent.long_memory_train()
+
+            if score > best_score:
+                best_score = score
+                agent.model.save()
+            
+            print('game:', agent.number_of_games, 'score:', score)
+    plt.ioff()
+    plt.close("all")
+    
