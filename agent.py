@@ -223,16 +223,16 @@ class AI_Game:
                 self.GAME_RUNNING = False
         return self.reward, not self.snake.alive, self.score
 
-class Grath_plotter:
+class Graph_plotter:
     def __init__(self, scores, mean_scores) -> None:
         plt.ion()
-        self.fig = plt.figure(1)
+        plt.figure(1)
         self.draw_graph(scores, mean_scores)
         
     def draw_graph(self, scores, mean_scores):
         '''функция для отрисовки графика обучения
         '''        
-        self.fig.clf()
+        plt.clf()
         plt.text(len(scores) - 1, scores[-1], str(scores[-1]))     # пишет возле графика со scores какой последний score
         plt.text(len(scores) - 1, mean_scores[-1], str(round(mean_scores[-1], 3)))        # пишет mean_score возле графика со средними
 
@@ -244,20 +244,18 @@ class Grath_plotter:
         plt.legend(loc='upper left', fontsize=10)
         plt.ylim(ymin=0)
 
-        #plt.show()
-        plt.pause(0.01)
+        plt.pause(0.1)
     
     def finish(self, scores, mean_scores):
         plt.ioff()
         self.draw_graph(scores, mean_scores)
-        #plt.show()
 
 def training_process():
     '''Функция, которая запускает само обучение нейронной сети,
     '''
     scores = [0]
     mean_scores = [0]
-    plotter = Grath_plotter(scores, mean_scores)
+    plotter = Graph_plotter(scores, mean_scores)
 
     best_score = 0
     agent = Learning_Agent()
@@ -283,7 +281,7 @@ def training_process():
             agent.number_of_games += 1
 
             mean_scores = np.append(mean_scores, np.sum(scores) / agent.number_of_games)
-            #plt.close(plotter.fig)
+            
             plotter.draw_graph(scores, mean_scores)
 
             agent.long_memory_train()
