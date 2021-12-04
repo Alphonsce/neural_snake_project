@@ -1,11 +1,13 @@
 import numpy
 import pygame
+import matplotlib.pyplot as plt
 
 from model import *
 from graphics import *
 from constans import *
 from agent import Learning_Agent as agent
 from agent import training_process
+
 
 class Game_field:
     """ Собственно само независимое игровое поле"""
@@ -119,6 +121,7 @@ class Game:
         self.back = False
         self.ai_difficulty = 1
         self.wall_map = 1
+        self.learning_finish = False
 
     def start_menu(self):
         """ Стартовое меню отвечает за выбор и распределение игровых модов """
@@ -167,6 +170,9 @@ class Game:
             draw_start_menu(menu_buttons, sliders, self.display)
             draw_text("difficulty", 30, WIDTH / 2, 640, WHITE, self.display)
             pygame.display.flip()
+            if self.learning_finish:
+                self.learning_finish = False
+                plt.show()
         self.back = False
 
     def Player_menu(self):
@@ -283,6 +289,7 @@ class Game:
     def learning_visualisation(self):
         pygame.display.quit()
         training_process()
+        self.learning_finish = True
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
 
 def main():

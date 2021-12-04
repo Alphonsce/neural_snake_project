@@ -10,8 +10,6 @@ from model import *
 from constans import *
 from for_AI_snake.training_model import *
 
-plt.ion()
-
 class Learning_Agent:
     '''Агент - это то, что управляет игрой, 
     здесь будет определяться текущее состояние игрового поля: state, 
@@ -202,7 +200,7 @@ class AI_Game:
         '''
         self.reward = 0
         self.frame_number += 1
-        self.clock.tick(FPS * 2)
+        self.clock.tick(FPS)
         self.display.fill((0, 0, 0))
         self.update_drawing()
 
@@ -225,33 +223,41 @@ class AI_Game:
                 self.GAME_RUNNING = False
         return self.reward, not self.snake.alive, self.score
 
+class Grath_plotter:
+    def __init__(self, scores, mean_scores) -> None:
+        plt.ion()
+        self.fig = plt.figure(1)
+        self.draw_graph(scores, mean_scores)
+        
+    def draw_graph(self, scores, mean_scores):
+        '''функция для отрисовки графика обучения
+        '''        
+        self.fig.clf()
+        plt.text(len(scores) - 1, scores[-1], str(scores[-1]))     # пишет возле графика со scores какой последний score
+        plt.text(len(scores) - 1, mean_scores[-1], str(round(mean_scores[-1], 3)))        # пишет mean_score возле графика со средними
 
-def draw_graph(scores, mean_scores):
-    '''функция для отрисовки графика обучения
-    '''
-    #ticks = np.arange(len(scores))
-    plt.clf()
-    #plt.xticks(ticks)
-    plt.text(len(scores) - 1, scores[-1], str(scores[-1]))     # пишет возле графика со scores какой последний score
-    plt.text(len(scores) - 1, mean_scores[-1], str(round(mean_scores[-1], 3)))        # пишет mean_score возле графика со средними
+        plt.xlabel('Количество игр')
+        plt.ylabel('Набранные очки')
 
-    plt.xlabel('Количество игр')
-    plt.ylabel('Набранные очки')
+        plt.plot(scores, label='Очки')
+        plt.plot(mean_scores, label='Среднее')
+        plt.legend(loc='upper left', fontsize=10)
+        plt.ylim(ymin=0)
 
-    plt.plot(scores, label='Очки')
-    plt.plot(mean_scores, label='Среднее')
-    plt.legend(loc='upper left', fontsize=10)
-    plt.ylim(ymin=0)
-
-    plt.show()
-    plt.pause(0.1)
+        #plt.show()
+        plt.pause(0.01)
+    
+    def finish(self, scores, mean_scores):
+        plt.ioff()
+        self.draw_graph(scores, mean_scores)
+        #plt.show()
 
 def training_process():
     '''Функция, которая запускает само обучение нейронной сети,
     '''
     scores = [0]
     mean_scores = [0]
-    draw_graph(scores, mean_scores)
+    plotter = Grath_plotter(scores, mean_scores)
 
     best_score = 0
     agent = Learning_Agent()
@@ -277,7 +283,8 @@ def training_process():
             agent.number_of_games += 1
 
             mean_scores = np.append(mean_scores, np.sum(scores) / agent.number_of_games)
-            draw_graph(scores, mean_scores)
+            #plt.close(plotter.fig)
+            plotter.draw_graph(scores, mean_scores)
 
             agent.long_memory_train()
 
@@ -286,7 +293,7 @@ def training_process():
                 agent.model.save()
             
             print('game:', agent.number_of_games, 'score:', score)
-    plt.close("all")
+    plotter.finish(scores, mean_scores)
     
 def draw_field_AI(surf, snake_tail, snake_head, fruit):
     """ Функция рисует поле.
@@ -319,3 +326,4 @@ def draw_field_AI(surf, snake_tail, snake_head, fruit):
             ))
         (x_0, y_0) = (x, y)
     return surf
+
