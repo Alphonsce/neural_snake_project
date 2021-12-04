@@ -1,5 +1,14 @@
 from enum import Enum
 
+MAX_MEMORY = 100_000
+BATCH_SIZE = 1000
+LR = 0.0015      # learning rate, отвечает за размер шага в градиентном спуске
+
+GAMMA = 0.9     # параметр, регулирующий обучение с подкреплением
+STARTING_EPSILON = 80     # параметр, отвечающий за случайность принятых агентом решений
+
+WAITING_CONSTANT = 500      # отвечает за то как долго мы готовы ждать конца, когда агент циклит одно движение
+
 GRAY = (150, 150, 150)
 GREEN = (0, 200, 0)
 WHITE = (255, 255, 255)
@@ -31,7 +40,7 @@ WIDTH_OF_TAIL = 0.8 #коэффициент толщины для рисовки
 #Количество обработок в секунду
 FPS = 60
 # По факту задает скорость змеи. V * FRAMES_PER_STEP = FPS
-FRAMES_PER_STEP = 6
+FRAMES_PER_STEP = 5
 
 class Direction(Enum):
     def __eq__(self, other):

@@ -30,7 +30,7 @@ class Fruit:
 
 class Snake:
     """ Класс змея. Является основным игроком"""
-    def __init__(self, x, y, gamefield):
+    def __init__(self, x, y, gamefield, mode="normal"):
         """ Создание змеи 
         x, y - начальные координаты головы 
         gamefield - игровое поле, в котором змейка перемещается
@@ -42,6 +42,9 @@ class Snake:
         self.alive = True
         self.step = 0
         self.gamefield = gamefield
+        self.frames_per_step = FRAMES_PER_STEP
+        if mode == "learning":
+            self.frames_per_step = 1
 
     def move(self, fruit):
         """ Отвечает за перемещение змеи
@@ -49,7 +52,7 @@ class Snake:
         """
         if self.alive:
             self.step += 1
-        if self.step >= FRAMES_PER_STEP:
+        if self.step >= self.frames_per_step:
             Vx, Vy = self.speed
             if self.direction.value != (-Vx, -Vy):
                 self.speed = self.direction.value

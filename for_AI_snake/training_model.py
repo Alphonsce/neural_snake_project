@@ -58,10 +58,11 @@ class Q_func_Trainer:
         target = prediction.clone()
         for idx in range(len(game_over)):
             # на всём batch'е обучаемся
-            Q_new = reward[idx]
+            Q_new = reward[idx]     # если игра еще не закончилась, то мы большого прогона не делаем и полагаем что максимальный выход - reward в ход после предсказания
+            
             if not game_over[idx]:
                 Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))       # уравнение Беллмана, оно использует как раз reward 
-
+# В уравнении Беллмана мы находим потенциально максимальный выход нейронной сети в следующий ход после того хода, для которого уже предсказали выход
             target[idx][torch.argmax(action[idx]).item()] = Q_new
     
         self.optimizer.zero_grad()
