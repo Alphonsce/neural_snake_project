@@ -1,5 +1,5 @@
 import socket
-
+import json
 
 """s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # создаем аналогичный сокет, как у сервера
 s.connect(("localhost", 10000)) # коннектимся с сервером
@@ -38,7 +38,7 @@ class Client:
     def get_information(self):
         try:
             text = self.socket.recv(1024)
-            print(text.decode('utf-8'))
+            print(json.loads(text.decode('utf-8') ))
         except:
             pass
 

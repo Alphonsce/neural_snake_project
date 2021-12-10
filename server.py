@@ -1,5 +1,6 @@
 import socket
 import time
+import json
 
 """serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Создается сокет протокола TCP
 serv.bind(("", 10000)) # Присваиваем ему порт 10000
@@ -63,7 +64,6 @@ class Server:
         if data == b"Hello Snake11002":
             client, addr = self.serv.accept()
             self.gamers.append(Gamer(client, addr, self))
-            #print(self.gamers)
 
     def broadcast(self):
         self.broad.sendto(self.message, ('<broadcast>', 11002))
@@ -73,7 +73,7 @@ class Server:
 
     def update(self):
         for item in self.gamers:
-            item.client.send("kuku".encode("utf-8"))
+            item.client.send(json.dumps([1, 2, 3]).encode('utf-8'))
 
     def stop(self):
         self.serv.close()
