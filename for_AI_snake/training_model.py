@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import os
 
 class Neural_network(nn.Module):
+    '''просто сама нейронная сеть'''
     def __init__(self, input_size, hidden_size, output_size):
         self.was_loaded = False
         super().__init__()
@@ -32,6 +33,7 @@ class Neural_network(nn.Module):
 
 
 class Q_func_Trainer:
+    '''то что обновляет коэффициенты нейронной сети'''
     def __init__(self, model, lr, gamma):
         self.lr = lr
         self.gamma = gamma
