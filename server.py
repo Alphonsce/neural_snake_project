@@ -80,7 +80,7 @@ class Server:
 
 from client import *
 player1 = Client()
-serv = Server(2)
+serv = Server(5)
 x = 1
 while x < 60: 
     x += 1
@@ -89,6 +89,16 @@ while x < 60:
     serv.join()
     serv.update()
     player1.update()
+
+"""
+player = Client()
+x = 1
+while x < 60: 
+    x += 1
+    time.sleep(1)
+    player.update()
+
+"""
 """
 from client import *
 player1 = Client()

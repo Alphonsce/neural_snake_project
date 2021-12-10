@@ -62,10 +62,3 @@ class Client:
     def stop(self):
         self.socket.close()
 
-import time
-player = Client()
-x = 1
-while x < 60: 
-    x += 1
-    time.sleep(1)
-    player.update()
