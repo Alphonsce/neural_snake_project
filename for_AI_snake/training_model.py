@@ -39,7 +39,7 @@ class Q_func_Trainer:
         self.gamma = gamma
         self.model = model
         self.optimizer = optim.Adam(model.parameters(), lr=self.lr)     # по-сути это градиентный спуск, только более опимизированный
-        self.criterion = nn.MSELoss()       # функция ошибки - среднее значение квадрата отклонения
+        self.criterion = nn.MSELoss()       # функция ошибки - среднее значение квадрата отклонения (это то, что оптимизирует градиентный спуск)
 
     def train_step(self, state, action, reward, next_state, game_over):
         state = torch.tensor(state, dtype=torch.float)
