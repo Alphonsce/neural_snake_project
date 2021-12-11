@@ -1,9 +1,34 @@
 from constans import *
+import random
 
+class FruitVS:
+    """ Тип фрукта"""
+    def __init__(self, game):
+        """ Создание фрукта перебором возможных координат
+        на вход подаются 
+        snakepose - координаты частей хвоста
+        snakehead - координаты головы
+        """
+        self.game = game
+        self.new_fruit()
 
-class Snake:
+    def new_fruit(self):
+        not_founded = True
+        while not_founded:
+            not_founded = False
+            x, y = (random.randint(FIELD_SIZE_W, self.game.field_size_w - FIELD_SIZE_W - 1),
+                random.randint(FIELD_SIZE_H, self.game.field_size_h - FIELD_SIZE_H - 1))
+            if self.game.cell[x][y].value != 0:
+                not_founded = True
+        self.pos = x, y
+    
+    def get_pos(self):
+        """ Функция возвращает положение фрукта"""
+        return self.pos 
+
+class SnakeVS:
     """ Класс змея. Является основным игроком"""
-    def __init__(self, x, y, gamefield):
+    def __init__(self, x, y, game, gamer):
         """ Создание змеи 
         x, y - начальные координаты головы 
         gamefield - игровое поле, в котором змейка перемещается
@@ -14,9 +39,10 @@ class Snake:
         self.direction = Direction.RIGHT
         self.alive = True
         self.step = 0
-        self.gamefield = gamefield
+        self.game = game
+        self.gamer = gamer
 
-    def move(self, fruit, dangers):
+    def move(self):
         """ Отвечает за перемещение змеи
         fruit - положение фрукта на поле
         """
@@ -29,37 +55,30 @@ class Snake:
                 Vx, Vy = self.speed
             self.step = 0
             x, y = self.head 
-            if not(0 <= (x + Vx) < FIELD_SIZE_W and 0 <= (y + Vy) < FIELD_SIZE_H):
-                self.speed = (0, 0)
-                self.alive = False
-            else:
-                for part in dangers:
-                    if part == (x + Vx, y + Vy):
-                        self.speed = (0, 0)
-                        self.alive = False
-                if self.alive:
-                    if fruit != (x + Vx, y + Vy):
-                        self.tail.pop(0)
-                    else:
-                        self.gamefield.new_fruit()
-                    self.tail.append(self.head)
-                    self.head = (x + Vx, y + Vy)
+            cell = self.game.cell[x+Vx][y+Vy]
+            if cell.value != 0:
+                if cell.value == 1:
+                    self.gamer.death()
+                    
+                if cell.value == 2:
+                    self.gamer.death()
+                    for gam in self.game.gamers:
+                        if gam.snake.head == (x + Vx, y + Vy):
+                            gam.death()
+                if cell.value == 4:
+                    self.gamer.death()
+
+            if self.alive:
+                self.tail.append(self.head)
+                self.head = (x + Vx, y + Vy)
+                if cell.value == 3:
+                    for fruit in self.game.fruits:
+                        if fruit.pos == (x + Vx, y + Vy):
+                            fruit.new_fruit()
+                else:
+                    self.tail.pop(0)
+
                 
-    def up(self):
-        """ Попытка поворта наверх"""
-        self.direction = (0, -1)
-
-    def down(self):
-        """ Попытка поворта вниз"""
-        self.direction = (0, 1)
-
-    def left(self):
-        """ Попытка поворта налево"""
-        self.direction = (-1, 0)
-            
-    def right(self):
-        """ Попытка поворта направо"""
-        self.direction = (1, 0)
 
     def get_pos(self):
         """ Возвращает положения частей хвоста и головы"""

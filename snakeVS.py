@@ -7,8 +7,8 @@ from model import *
 from graphics import *
 from constans import *
 import snake
-#from server import *
-#from client import *
+from server import *
+from client import *
 
 class GameVS:
     """ Объект типа игра отвечает за дисплей и циклы игры
@@ -56,6 +56,8 @@ class GameVS:
                     item.check_press(x, y)
                 if self.unclick:
                     item.deactivate()
+            if self.server != None:
+                self.server.update()
             draw_start_menu(menu_buttons, sliders, self.display)
             draw_text("Number of players", 30, WIDTH // 2, 640, WHITE, self.display)
             pygame.display.flip()
@@ -117,18 +119,15 @@ class GameVS:
         self.VS_mod = False
 
     def run_server(self):
-        pass
-        #self.server = Server(self.players)
+        self.server = Server(self.players)
 
     def stop_server(self):
-        #self.server.stop()
-        #self.server = None
-        pass
+        self.server.stop()
+        self.server = None
 
     def find_server(self):
-        #self.client = Client()
-        #self.searching = True
-        pass
+        self.client = Client()
+        self.searching = True
 
     def run_game(self):
         if self.players == self.gamers:

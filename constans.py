@@ -73,4 +73,9 @@ WALL_MAP = [
     ]
 ]
 
-
+class Cell(Enum):
+    Nothing = 0
+    Snake = 1
+    Head = 2
+    Fruit = 3
+    Wall = 4
