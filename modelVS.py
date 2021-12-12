@@ -20,6 +20,7 @@ class FruitVS:
                 random.randint(FIELD_SIZE_H, self.game.field_size_h - FIELD_SIZE_H - 1))
             if self.game.cell[x][y].value != 0:
                 not_founded = True
+        print("new fruit", x, y)
         self.pos = x, y
     
     def get_pos(self):
@@ -33,7 +34,7 @@ class SnakeVS:
         x, y - начальные координаты головы 
         gamefield - игровое поле, в котором змейка перемещается
         """
-        self.tail = [(x-1, y), (x-2, y)]
+        self.tail = [(x-2, y), (x-1, y)]
         self.head = (x, y)
         self.speed = (1, 0)
         self.direction = Direction.RIGHT
@@ -55,18 +56,18 @@ class SnakeVS:
                 Vx, Vy = self.speed
             self.step = 0
             x, y = self.head 
+            print("move snake", x+Vx, y+Vy)
             cell = self.game.cell[x+Vx][y+Vy]
-            if cell.value != 0:
-                if cell.value == 1:
-                    self.gamer.death()
-                    
-                if cell.value == 2:
-                    self.gamer.death()
-                    for gam in self.game.gamers:
-                        if gam.snake.head == (x + Vx, y + Vy):
-                            gam.death()
-                if cell.value == 4:
-                    self.gamer.death()
+            if cell.value == 1:
+                self.gamer.death()
+                
+            elif cell.value == 2:
+                self.gamer.death()
+                for gam in self.game.gamers:
+                    if gam.snake.head == (x + Vx, y + Vy):
+                        gam.death()
+            elif cell.value == 4:
+                self.gamer.death()
 
             if self.alive:
                 self.tail.append(self.head)

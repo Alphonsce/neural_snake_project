@@ -2,6 +2,7 @@ import random
 import socket
 import time
 import json
+import pygame
 
 from constans import *
 from modelVS import *
@@ -35,9 +36,8 @@ class Gamer:
         self.current_score = 0
         self.deaths = 0
 
-    def update(self, direction=None):
-        if direction != None:
-            self.snake.direction = direction
+    def update(self, direction):
+        self.snake.direction = direction
         self.snake.move()
 
     def death(self):
@@ -49,14 +49,54 @@ class Gamer:
     def new_snake(self):
         not_found = True
         while not_found:
-            x, y = (random.randint(FIELD_SIZE_W + 3, self.game.field_size - FIELD_SIZE_W - 4),
-                random.randint(FIELD_SIZE_H + 3, self.game.field_size - FIELD_SIZE_H - 4))
+            x, y = (random.randint(FIELD_SIZE_W + 3, self.game.field_size_w - FIELD_SIZE_W - 4),
+                random.randint(FIELD_SIZE_H + 3, self.game.field_size_h - FIELD_SIZE_H - 4))
             not_found = False 
             for i in range(-3, 4, 1):
                 for j in range(-3, 4, 1):
                     if self.game.cell[x + i][y + j].value != 0:
                         not_found = True
+            #print(x, y)
         self.snake = SnakeVS(x, y, self.game, self)
+
+class Server_Game:
+    def __init__(self, Num_of_players, gamers) -> None:
+        self.gamers = gamers
+
+        self.field_size_w = FIELD_SIZE_W * 2 + 10 * Num_of_players + 10
+        self.field_size_h = FIELD_SIZE_H * 2 + 10 * Num_of_players + 10
+
+        self.cell = [0]*self.field_size_w
+        for i in range(self.field_size_w):
+            self.cell[i]=[Cell.Nothing]*self.field_size_h
+
+        self.fruits =[]
+        for i in range((Num_of_players+1)//2):
+            self.fruits.append(FruitVS(self))
+
+        self.walls = [*((FIELD_SIZE_W - 1, y) for y in range(self.field_size_h)),
+            *((self.field_size_w - FIELD_SIZE_W, y) for y in range(self.field_size_h)),
+            *((x, FIELD_SIZE_H - 1) for x in range(self.field_size_w)),
+            *((x, self.field_size_h - FIELD_SIZE_H) for x in range(self.field_size_w))
+        ]
+
+    def update(self):
+        self.cell = [0]*self.field_size_w
+        for i in range(self.field_size_w):
+            self.cell[i]=[Cell.Nothing]*self.field_size_h
+        for gamer in self.gamers:
+            x, y = gamer.snake.head
+            self.cell[x][y] = Cell.Head
+            for item in gamer.snake.tail:
+                x, y = item
+                self.cell[x][y] = Cell.Snake
+        for item in self.fruits:
+            x, y = item.pos
+            self.cell[x][y] = Cell.Fruit
+        for item in self.walls:
+            x, y = item
+            self.cell[x][y] = Cell.Snake
+
 
 class Server:
     def __init__(self, Num_of_players) -> None:
@@ -64,26 +104,18 @@ class Server:
         self.broad = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         self.broad.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.message = "Wellcome snake online".encode('utf-8') 
-        self.broad.settimeout(0.02)
+        self.broad.settimeout(0.002)
 
         self.serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.serv.bind(("", 11001))
         self.serv.listen(Num_of_players) 
-        self.serv.settimeout(0.02)
+        self.serv.settimeout(0.002)
         self.connected = False
 
         self.gamers = []
-        self.field_size_w = FIELD_SIZE_W * 2 + 10 * Num_of_players + 10
-        self.field_size_h = FIELD_SIZE_H * 2 + 10 * Num_of_players + 10
-        self.cell = [[Cell.Nothing]*self.field_size_h]*self.field_size_w
-        self.fruits =[]
-        for i in range((Num_of_players+1)//2):
-            self.fruits.append(FruitVS(self))
-        self.walls = [*((FIELD_SIZE_W - 1, y) for y in range(self.field_size_h)),
-            *((self.field_size_w - FIELD_SIZE_W, y) for y in range(self.field_size_h))
-            *((x, FIELD_SIZE_H - 1) for x in range(self.field_size_w)),
-            *((x, self.field_size_h - FIELD_SIZE_H) for x in range(self.field_size_w))
-        ]
+        self.game = Server_Game(Num_of_players, self.gamers)
+        self.last_broadcast = pygame.time.get_ticks()
+        
 
     def join(self):
         try:
@@ -92,48 +124,61 @@ class Server:
             data = ""
         if data == b"Hello Snake11002":
             client, addr = self.serv.accept()
-            self.gamers.append(Gamer(client, addr, self))
+            self.gamers.append(Gamer(client, addr, self.game))
+            if len(self.gamers) == self.Num_of_pl:
+                self.connected = True
+                self.broad.sendto(b"Start game", ('<broadcast>', 11002))
+                for item in self.gamers:
+                    try:
+                        data = self.game.walls
+                        item.client.send(json.dumps(data).encode('utf-8'))
+                    except:
+                        self.stop()
 
     def broadcast(self):
         self.broad.sendto(self.message, ('<broadcast>', 11002))
         print("message sent!")
-        if len(self.gamers) == self.Num_of_pl:
-            self.broad.close()
-            self.connected = True
+                  
+    def check_quits(self):
+        try:
+            data, addr = self.broad.recvfrom(1024)
+        except:
+            data = ""
+        if data == b"GoodBuy Snake11002":
+            self.stop()
 
     def update(self):
         if self.connected:
+            
+            self.check_quits()
             for item in self.gamers:
-                direction = Direction.RIGHT # FIXME
+                try:
+                    data = [
+                        [[gamer.snake.step, gamer.snake.head, gamer.snake.tail] for gamer in self.gamers],
+                        [fruit.pos for fruit in self.game.fruits]
+                        ]
+                    item.client.send(json.dumps(data).encode('utf-8'))
+                except:
+                    self.stop()
+                try:
+                    data = item.client.recv(1024)
+                    direction = Direction(tuple(json.loads(data.decode('utf-8'))))
+                except:
+                    direction = Direction(item.snake.speed)
                 item.update(direction)
-                try:
-                    item.client.send(json.dumps([1, 2, 3]).encode('utf-8'))
-                except:
-                    pass
-
-            self.cell = [[Cell.Nothing]*self.field_size]*self.field_size
-            for gamer in self.gamers:
-                x, y = gamer.snake.head
-                self.cell[x][y] = Cell.Head
-                for item in gamer.snake.tail:
-                    x, y = item
-                    self.cell[x][y] = Cell.Snake
-            for item in self.fruits:
-                x, y = item.pos
-                self.cell[x][y] = Cell.Fruit
-            for item in self.walls:
-                x, y = item
-                self.cell[x][y] = Cell.Wall
-
-
-            for i in range(10):
-                try:
-                    self.serv.recvfrom(1024)
-                except:
-                    pass
-        
+            
+            self.game.update()
+            
+        else:
+            now = pygame.time.get_ticks()
+            if now - self.last_broadcast > 1000:
+                self.broadcast()
+                self.last_broadcast = now
+            self.join()
 
     def stop(self):
+        self.broad.sendto(b"Stop game", ('<broadcast>', 11002))
+        self.broad.close()
         self.serv.close()
 
 """from client import *

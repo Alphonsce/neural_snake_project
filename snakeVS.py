@@ -6,9 +6,9 @@ from pygame import display
 from model import *
 from graphics import *
 from constans import *
-import snake
 from server import *
 from client import *
+from graphicsVS import *
 
 class GameVS:
     """ Объект типа игра отвечает за дисплей и циклы игры
@@ -19,7 +19,7 @@ class GameVS:
         self.clock = pygame.time.Clock()
         self.game = game
         self.display = self.game.display
-        self.screen = pygame.Surface((WIDTH, HEIGHT - BAR_HEIGHT))
+        self.screen = pygame.Surface((2000, 2000))
         self.interf = pygame.Surface((WIDTH, BAR_HEIGHT))
         self.GAME_RUNNING = True
         self.back = False
@@ -29,6 +29,7 @@ class GameVS:
         self.gamers = 0
         self.searching = False
         self.VS_mod = True
+        self.snake = Direction.RIGHT
 
     def start_menu(self):
         """ Стартовое меню отвечает за выбор и распределение игровых модов """
@@ -37,9 +38,9 @@ class GameVS:
         sliders = []
         sliders.append(Slider(WIDTH / 2, 700, 250, (1, 10, 1)))
         menu_buttons.append(Button("PLAY", WIDTH // 2, 200, 300, 55, self.wait, ()))
-        menu_buttons.append(Button("RUN SERVER",  WIDTH // 2, 300, 300, 55, self.wait, ()))
-        menu_buttons.append(Button("STOP SERVER",  WIDTH // 2, 400, 300, 55, self.wait, ()))
-        menu_buttons.append(Button("FIND SERVER",  WIDTH // 2, 500, 300, 55, self.wait, ()))
+        menu_buttons.append(Button("RUN SERVER",  WIDTH // 2, 300, 300, 55, self.run_server, ()))
+        menu_buttons.append(Button("STOP SERVER",  WIDTH // 2, 400, 300, 55, self.stop_server, ()))
+        menu_buttons.append(Button("FIND SERVER",  WIDTH // 2, 500, 300, 55, self.find_server, ()))
         menu_buttons.append(Button("BACK",  WIDTH // 2 , 600, 300, 55, self.go_back, ()))
         while self.GAME_RUNNING and self.VS_mod:
             x, y = pygame.mouse.get_pos()
@@ -56,8 +57,12 @@ class GameVS:
                     item.check_press(x, y)
                 if self.unclick:
                     item.deactivate()
+
             if self.server != None:
                 self.server.update()
+            if self.searching:
+                self.client.update()
+            self.run_game()
             draw_start_menu(menu_buttons, sliders, self.display)
             draw_text("Number of players", 30, WIDTH // 2, 640, WHITE, self.display)
             pygame.display.flip()
@@ -68,15 +73,16 @@ class GameVS:
         """ Основной цикл игры.
         """
         while self.GAME_RUNNING and self.VS_mod:
-            """if self.client.check_server_fall():
+            #if self.client.check_server_fall():
                 
             if self.server != None:
                 self.server.update()
-            """
+            self.client.update()
             self.clock.tick(FPS)
-            self.display.fill((0, 0, 0))
+            self.screen.fill((0, 0, 0))
             self.keys_loop()
-            #draw_field_VSmod(self.display, self)
+            draw_field_VSmod(self.screen, self.client)
+            self.display.blit(self.screen, (-660, -660))
             pygame.display.flip()
 
     def keys_loop(self):
@@ -88,7 +94,7 @@ class GameVS:
                 self.GAME_RUNNING = False 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.start_menu()
+                    self.go_back()
                 if event.key == pygame.K_UP:
                     self.snake = Direction.UP
                 if event.key == pygame.K_DOWN:
@@ -116,25 +122,36 @@ class GameVS:
         pass
 
     def go_back(self):
+        if self.server != None:
+            self.stop_server()
+        if self.client != None:
+            self.client.quit_game()
         self.VS_mod = False
 
     def run_server(self):
-        self.server = Server(self.players)
+        if self.server == None:
+            self.server = Server(self.players)
+            print("start")
 
     def stop_server(self):
-        self.server.stop()
-        self.server = None
+        if self.server != None:
+            self.server.stop()
+            self.server = None
+            print("stop")
 
     def find_server(self):
-        self.client = Client()
-        self.searching = True
+        if not self.searching:
+            self.client = Client(self)
+            self.searching = True
+            print("searching")
 
     def run_game(self):
-        if self.players == self.gamers:
-            self.mainloop()
+        if self.client != None:
+            if self.client.game_started:
+                self.mainloop()
 
     def quit_game(self):
-        # delete #self.server.stop()
+        self.server.stop()
         self.GAME_RUNNING = False
 
 if __name__ == "__main__":
