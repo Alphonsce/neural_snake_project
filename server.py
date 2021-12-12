@@ -3,6 +3,7 @@ import socket
 import time
 import json
 import pygame
+from numpy import sqrt
 
 from constans import *
 from modelVS import *
@@ -63,8 +64,8 @@ class Server_Game:
     def __init__(self, Num_of_players, gamers) -> None:
         self.gamers = gamers
 
-        self.field_size_w = FIELD_SIZE_W * 2 + 10 * Num_of_players + 10
-        self.field_size_h = FIELD_SIZE_H * 2 + 10 * Num_of_players + 10
+        self.field_size_w = FIELD_SIZE_W * 2 + int(20 * sqrt(Num_of_players))
+        self.field_size_h = FIELD_SIZE_H * 2 + int(20 * sqrt(Num_of_players))
 
         self.cell = [0]*self.field_size_w
         for i in range(self.field_size_w):
@@ -149,14 +150,16 @@ class Server:
 
     def update(self):
         if self.connected:
-            
-            self.check_quits()
+            data = [
+                [[gamer.snake.step, gamer.snake.head, gamer.snake.tail] for gamer in self.gamers],
+                [fruit.pos for fruit in self.game.fruits]
+                ]
             for item in self.gamers:
+                for i in range(self.Num_of_pl):
+                    if item is self.gamers[i] and i != 0:
+                        data[0][i], data[0][0] = data[0][0] , data[0][i]
                 try:
-                    data = [
-                        [[gamer.snake.step, gamer.snake.head, gamer.snake.tail] for gamer in self.gamers],
-                        [fruit.pos for fruit in self.game.fruits]
-                        ]
+
                     item.client.send(json.dumps(data).encode('utf-8'))
                 except:
                     self.stop()

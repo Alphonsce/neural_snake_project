@@ -22,6 +22,7 @@ def draw_field_VSmod(surf, gamefield):
         (x_0, y_0) = tuple(fruit)
         x_0 *= CELL_SIDE
         y_0 *= CELL_SIDE
+        pygame.draw.rect(surf, RED, (x_0, y_0, CELL_SIDE, CELL_SIDE))
 
     for item in gamefield.walls:
         x, y = tuple(item)
@@ -31,26 +32,24 @@ def draw_field_VSmod(surf, gamefield):
 
     for snake in gamefield.snakes:
         step, snake_head, snake_tail = tuple(snake)
-        pygame.draw.rect(surf, RED, (x_0, y_0, CELL_SIDE, CELL_SIDE))
         k = 0.5 * (1 - WIDTH_OF_TAIL)
         (x_0, y_0) = snake_head
         (x, y) = snake_tail[-1]
-        if int(abs(x - x_0) + abs(y - y_0)) == 1:
-            x_0 += step / FRAMES_PER_STEP * (x_0 - x)
-            y_0 += step / FRAMES_PER_STEP * (y_0 - y)
+        x_0 += step / FRAMES_PER_STEP * (x_0 - x)
+        y_0 += step / FRAMES_PER_STEP * (y_0 - y)
         pygame.draw.rect(surf, BLUE, (int(x_0 * CELL_SIDE), int(y_0 * CELL_SIDE), CELL_SIDE, CELL_SIDE))
         for i in range(len(snake_tail)):
             (x, y) = snake_tail[-i - 1]
-            if int(abs(x - x_0) + abs(y - y_0)) == 1:
-                if i == len(snake_tail) - 1:
-                    x += step / FRAMES_PER_STEP * (x_0 - x)
-                    y += step / FRAMES_PER_STEP * (y_0 - y)
-                pygame.draw.rect(surf, SNAKE_COLORS[i % len(SNAKE_COLORS)], (
-                    int((min(x, x_0) + k) * CELL_SIDE),
-                    int((min(y, y_0) + k) * CELL_SIDE),
-                    int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
-                    int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
-                ))
+            if i == len(snake_tail) - 1:
+                x += step / FRAMES_PER_STEP * (x_0 - x)
+                y += step / FRAMES_PER_STEP * (y_0 - y)
+            # SNAKE_COLORS[i % len(SNAKE_COLORS)]
+            pygame.draw.rect(surf, BLUE, (
+                int((min(x, x_0) + k) * CELL_SIDE),
+                int((min(y, y_0) + k) * CELL_SIDE),
+                int(CELL_SIDE * (1 + abs(x - x_0) - 2 * k)),
+                int(CELL_SIDE * (1 + abs(y - y_0) - 2 * k))
+            ))
             (x_0, y_0) = (x, y)
         x += step / FRAMES_PER_STEP * (x_0 - x)
         y += step / FRAMES_PER_STEP * (y_0 - y)

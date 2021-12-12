@@ -81,9 +81,16 @@ class GameVS:
             self.screen.fill((0, 0, 0))
             self.keys_loop()
             draw_field_VSmod(self.screen, self.client)
-            #x, y = tuple(self.client.snakes[0][1])
-            #self.display.blit(self.screen, (-x // 10 * 10 * CELL_SIDE, -y// 10 * 10 * CELL_SIDE))
-            self.display.blit(self.screen, (-600, -600))
+            step = self.client.snakes[0][0]
+            (x_0, y_0) = self.client.snakes[0][1]
+            (x, y) = self.client.snakes[0][2][-1]
+            x_0 += step / FRAMES_PER_STEP * (x_0 - x)
+            y_0 += step / FRAMES_PER_STEP * (y_0 - y)
+            self.display.blit(self.screen, (
+                -CELL_SIDE * (x_0) + WIDTH / 2,
+                - (y_0)* CELL_SIDE + (HEIGHT - BAR_HEIGHT) / 2)
+                )
+            #self.display.blit(self.screen, (-600, -600))
 
             pygame.display.flip()
 
