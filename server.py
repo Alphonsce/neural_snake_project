@@ -217,3 +217,12 @@ while x < 30:
     serv.update()
     player1.update()"""
 
+""" data = [
+                [[gamer.snake.step, gamer.snake.head, gamer.snake.tail] for gamer in self.gamers],
+                [fruit.pos for fruit in self.game.fruits]
+                ]
+            for item in self.gamers:
+                try:
+                    for i in self.Num_of_pl:
+                        if item is self.gamers[i]:
+                            data[0][i], data[0][0] = data[0][0] , data[0][i]"""

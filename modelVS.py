@@ -20,7 +20,6 @@ class FruitVS:
                 random.randint(FIELD_SIZE_H, self.game.field_size_h - FIELD_SIZE_H - 1))
             if self.game.cell[x][y].value != 0:
                 not_founded = True
-        print("new fruit", x, y)
         self.pos = x, y
     
     def get_pos(self):
@@ -56,7 +55,6 @@ class SnakeVS:
                 Vx, Vy = self.speed
             self.step = 0
             x, y = self.head 
-            print("move snake", x+Vx, y+Vy)
             cell = self.game.cell[x+Vx][y+Vy]
             if cell.value == 1:
                 self.gamer.death()

@@ -37,7 +37,6 @@ class GameVS:
         menu_buttons = []
         sliders = []
         sliders.append(Slider(WIDTH / 2, 700, 250, (1, 10, 1)))
-        menu_buttons.append(Button("PLAY", WIDTH // 2, 200, 300, 55, self.wait, ()))
         menu_buttons.append(Button("RUN SERVER",  WIDTH // 2, 300, 300, 55, self.run_server, ()))
         menu_buttons.append(Button("STOP SERVER",  WIDTH // 2, 400, 300, 55, self.stop_server, ()))
         menu_buttons.append(Button("FIND SERVER",  WIDTH // 2, 500, 300, 55, self.find_server, ()))
@@ -82,7 +81,10 @@ class GameVS:
             self.screen.fill((0, 0, 0))
             self.keys_loop()
             draw_field_VSmod(self.screen, self.client)
-            self.display.blit(self.screen, (-660, -660))
+            #x, y = tuple(self.client.snakes[0][1])
+            #self.display.blit(self.screen, (-x // 10 * 10 * CELL_SIDE, -y// 10 * 10 * CELL_SIDE))
+            self.display.blit(self.screen, (-600, -600))
+
             pygame.display.flip()
 
     def keys_loop(self):
@@ -122,8 +124,7 @@ class GameVS:
         pass
 
     def go_back(self):
-        if self.server != None:
-            self.stop_server()
+        self.stop_server()
         if self.client != None:
             self.client.quit_game()
         self.VS_mod = False
