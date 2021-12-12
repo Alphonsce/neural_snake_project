@@ -77,22 +77,21 @@ class GameVS:
             if self.server != None:
                 self.server.update()
             self.client.update()
-            self.clock.tick(FPS)
-            self.screen.fill((0, 0, 0))
             self.keys_loop()
-            draw_field_VSmod(self.screen, self.client)
-            step = self.client.snakes[0][0]
-            (x_0, y_0) = self.client.snakes[0][1]
-            (x, y) = self.client.snakes[0][2][-1]
-            x_0 += step / FRAMES_PER_STEP * (x_0 - x)
-            y_0 += step / FRAMES_PER_STEP * (y_0 - y)
-            self.display.blit(self.screen, (
-                -CELL_SIDE * (x_0) + WIDTH / 2,
-                - (y_0)* CELL_SIDE + (HEIGHT - BAR_HEIGHT) / 2)
-                )
-            #self.display.blit(self.screen, (-600, -600))
-
-            pygame.display.flip()
+            if self.client != None:
+                self.clock.tick(FPS)
+                self.screen.fill((0, 0, 0))
+                draw_field_VSmod(self.screen, self.client)
+                step = self.client.snakes[0][0]
+                (x_0, y_0) = self.client.snakes[0][1]
+                (x, y) = self.client.snakes[0][2][-1]
+                x_0 += step / FRAMES_PER_STEP * (x_0 - x)
+                y_0 += step / FRAMES_PER_STEP * (y_0 - y)
+                self.display.blit(self.screen, (
+                    -CELL_SIDE * (x_0) + WIDTH / 2,
+                    - (y_0)* CELL_SIDE + (HEIGHT - BAR_HEIGHT) / 2)
+                    )
+                pygame.display.flip()
 
     def keys_loop(self):
         """ Контроллер. Отвечает за взаимодействие человека с игрой
@@ -134,6 +133,7 @@ class GameVS:
         self.stop_server()
         if self.client != None:
             self.client.quit_game()
+            self.client = None
         self.VS_mod = False
 
     def run_server(self):
@@ -152,6 +152,12 @@ class GameVS:
             self.client = Client(self)
             self.searching = True
             print("searching")
+
+    def stop_client(self):
+        if self.client != None:
+            self.client.stop()
+            self.client = None
+            self.go_back()
 
     def run_game(self):
         if self.client != None:

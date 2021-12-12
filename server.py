@@ -147,30 +147,32 @@ class Server:
             data = ""
         if data == b"GoodBuy Snake11002":
             self.stop()
+        return not (data == b"GoodBuy Snake11002")
 
     def update(self):
         if self.connected:
-            data = [
-                [[gamer.snake.step, gamer.snake.head, gamer.snake.tail] for gamer in self.gamers],
-                [fruit.pos for fruit in self.game.fruits]
-                ]
-            for item in self.gamers:
-                for i in range(self.Num_of_pl):
-                    if item is self.gamers[i] and i != 0:
-                        data[0][i], data[0][0] = data[0][0] , data[0][i]
-                try:
+            if self.check_quits():
+                data = [
+                    [[gamer.snake.step, gamer.snake.head, gamer.snake.tail] for gamer in self.gamers],
+                    [fruit.pos for fruit in self.game.fruits]
+                    ]
+                for item in self.gamers:
+                    for i in range(self.Num_of_pl):
+                        if item is self.gamers[i] and i != 0:
+                            data[0][i], data[0][0] = data[0][0] , data[0][i]
+                    try:
 
-                    item.client.send(json.dumps(data).encode('utf-8'))
-                except:
-                    self.stop()
-                try:
-                    data = item.client.recv(1024)
-                    direction = Direction(tuple(json.loads(data.decode('utf-8'))))
-                except:
-                    direction = Direction(item.snake.speed)
-                item.update(direction)
-            
-            self.game.update()
+                        item.client.send(json.dumps(data).encode('utf-8'))
+                    except:
+                        self.stop()
+                    try:
+                        data = item.client.recv(1024)
+                        direction = Direction(tuple(json.loads(data.decode('utf-8'))))
+                    except:
+                        direction = Direction(item.snake.speed)
+                    item.update(direction)
+                
+                self.game.update()
             
         else:
             now = pygame.time.get_ticks()

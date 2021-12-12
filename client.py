@@ -77,12 +77,12 @@ class Client:
             print("game started")
             self.game_started = True
         elif data == b"Stop game" and self.connected:
-            self.stop()
+            self.game.stop_client()
+            self.connected = False
 
     def stop(self):
         self.broadcaster.close()
         self.socket.close()
-        self.game.go_back()
 
     def quit_game(self):
         if self.serv != None:
