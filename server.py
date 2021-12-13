@@ -137,7 +137,6 @@ class Server:
                 for item in self.gamers:
                     data = self.game.walls
                     item.client.send(json.dumps(data).encode('utf-8'))
-                    print("sent")
 
     def broadcast(self):
         self.broad.sendto(self.message, ('<broadcast>', 11002))
@@ -190,7 +189,7 @@ class Server:
 
     def stop(self):
         self.broad.sendto("Stop game".encode('utf-8'), ('<broadcast>', 11002))
-        self.broad.close()
+        #self.broad.close()
         self.serv.close()
 
 """from client import *
