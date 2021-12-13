@@ -147,7 +147,7 @@ class GameVS:
             print("stop")
 
     def find_server(self):
-        if not self.searching:
+        if self.client != None:
             self.client = Client(self)
             print("searching")
 
