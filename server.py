@@ -132,11 +132,12 @@ class Server:
             print(len(self.gamers))
             if len(self.gamers) == self.Num_of_pl:
                 self.connected = True
-                self.broad.sendto(b"Start game", ('<broadcast>', 11002))
+                self.broad.sendto("Start game".encode('utf-8'), ('<broadcast>', 11002))
                 print("game started")
                 for item in self.gamers:
                     data = self.game.walls
                     item.client.send(json.dumps(data).encode('utf-8'))
+                    print("sent")
 
     def broadcast(self):
         self.broad.sendto(self.message, ('<broadcast>', 11002))
@@ -153,7 +154,7 @@ class Server:
 
     def update(self):
         if self.connected:
-            #print(self.gamers)
+            print(self.gamers)
             if self.check_quits():
                 data = [
                     [[gamer.snake.step, gamer.snake.head, gamer.snake.tail] for gamer in self.gamers],
@@ -171,13 +172,13 @@ class Server:
                         item.client.send(json.dumps(data).encode('utf-8'))
                     except:
                         self.stop()
+                    print("waiting")
                     try:
                         data_client = item.client.recv(1024)
                         direction = Direction(tuple(json.loads(data_client.decode('utf-8'))))
                     except:
                         direction = Direction(item.snake.speed)
                     item.update(direction)
-                
                 self.game.update()
             
         else:

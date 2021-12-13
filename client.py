@@ -70,8 +70,8 @@ class Client:
         try:
             data, (addr, port) = self.broadcaster.recvfrom(1024)
         except:
-            data = ""
-        if data == b"Wellcome snake online" and not self.connected:
+            data = b""
+        if data.decode('utf-8') == "Wellcome snake online" and not self.connected:
             self.serv = (addr, port)
             self.broadcaster.sendto(self.message, (addr, port))
             self.socket.settimeout(2)
@@ -79,10 +79,10 @@ class Client:
             self.socket.settimeout(0.002)
             print(data.decode('utf-8'))
             self.connected = True
-        elif data == b"Start game" and self.connected:
+        elif data.decode('utf-8') == "Start game" and self.connected:
             print("game started")
             self.game_started = True
-        elif data == b"Stop game" and self.connected:
+        elif data.decode('utf-8') == "Stop game" and self.connected:
             self.game.stop_client()
             self.connected = False
 
