@@ -188,7 +188,7 @@ class Server:
             self.join()
 
     def stop(self):
-        self.broad.sendto(b"Stop game", ('<broadcast>', 11002))
+        self.broad.sendto("Stop game".encode('utf-8'), ('<broadcast>', 11002))
         self.broad.close()
         self.serv.close()
 
