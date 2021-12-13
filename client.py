@@ -34,6 +34,7 @@ class Client:
         self.connected = False
         self.game_started = False
         self.socket.settimeout(0.002)
+        self.connecting = False
         #self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
 
 
@@ -57,6 +58,12 @@ class Client:
 
     def update(self):
         self.look_up_server()
+        if self.connecting:
+            try:
+                self.socket.connect((self.serv, 11001))
+                self.connected = True
+            except:
+                pass
         if self.game_started:
             self.get_information()
             self.send_direction(self.game.snake)
@@ -68,11 +75,11 @@ class Client:
         except:
             data = ""
         if data == b"Wellcome snake online" and not self.connected:
-            self.serv = (addr, port)
+            self.serv = addr
             self.broadcaster.sendto(self.message, (addr, port))
             self.socket.connect((addr, 11001))
             print(data.decode('utf-8'))
-            self.connected = True
+            self.connecting = True
         elif data == b"Start game" and self.connected:
             print("game started")
             self.game_started = True
@@ -86,4 +93,15 @@ class Client:
 
     def quit_game(self):
         if self.serv != None:
-            self.broadcaster.sendto(b"GoodBuy Snake11002", self.serv)
+            self.broadcaster.sendto(b"GoodBuy Snake11002", (self.serv, 11002))
+
+"""
+import time
+x= 0
+cl = Client(2)
+while x < 30:
+    x +=1 
+    time.sleep(1)
+    cl.update()
+    print(x)
+"""
