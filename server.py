@@ -124,9 +124,10 @@ class Server:
         except:
             data = ""
         if data == b"Hello Snake11002":
-            self.serv.settimeout(2)
-            client, addr = self.serv.accept()
-            self.serv.settimeout(0.002)
+            try:
+                client, addr = self.serv.accept()
+            except:
+                pass
             self.gamers.append(Gamer(client, addr, self.game))
             if len(self.gamers) == self.Num_of_pl:
                 self.connected = True
