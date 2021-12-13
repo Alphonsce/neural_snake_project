@@ -126,9 +126,10 @@ class Server:
         if data == b"Hello Snake11002":
             try:
                 client, addr = self.serv.accept()
+                self.gamers.append(Gamer(client, addr, self.game))
             except:
                 pass
-            self.gamers.append(Gamer(client, addr, self.game))
+            
             if len(self.gamers) == self.Num_of_pl:
                 self.connected = True
                 self.broad.sendto(b"Start game", ('<broadcast>', 11002))
