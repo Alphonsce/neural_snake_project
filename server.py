@@ -122,9 +122,11 @@ class Server:
         try:
             data, addr = self.broad.recvfrom(1024)
         except:
-            data = ""
-        if data == b"Hello Snake11002":
-            
+            data = b""
+        data = data.decode('utf-8')
+        if data != "":
+            print(data)
+        if data == "Hello Snake11002":
             self.serv.settimeout(2)
             client, addr = self.serv.accept()
             self.gamers.append(Gamer(client, addr, self.game))
@@ -146,10 +148,11 @@ class Server:
         try:
             data, addr = self.broad.recvfrom(1024)
         except:
-            data = ""
-        if data == b"GoodBuy Snake11002":
+            data = b""
+        data = data.decode('utf-8')
+        if data == "GoodBuy Snake11002":
             self.stop()
-        return not (data == b"GoodBuy Snake11002")
+        return not (data == "GoodBuy Snake11002")
 
     def update(self):
         if self.connected:
@@ -171,7 +174,6 @@ class Server:
                         item.client.send(json.dumps(data).encode('utf-8'))
                     except:
                         self.stop()
-                    print("waiting")
                     try:
                         data_client = item.client.recv(1024)
                         direction = Direction(tuple(json.loads(data_client.decode('utf-8'))))
