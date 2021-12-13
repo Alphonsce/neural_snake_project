@@ -71,7 +71,7 @@ class Client:
             data, (addr, port) = self.broadcaster.recvfrom(1024)
         except:
             data = b""
-        data.decode('utf-8')
+        data = data.decode('utf-8')
         if data == "Wellcome snake online" and not self.connected:
             self.serv = (addr, port)
             self.broadcaster.sendto(self.message, (addr, port))
