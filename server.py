@@ -125,20 +125,20 @@ class Server:
             data = ""
         if data == b"Hello Snake11002":
             try:
+                self.serv.settimeout(0.2)
                 client, addr = self.serv.accept()
                 self.gamers.append(Gamer(client, addr, self.game))
+                self.serv.settimeout(0.002)
             except:
                 pass
-            
+            print(len(self.gamers))
             if len(self.gamers) == self.Num_of_pl:
                 self.connected = True
                 self.broad.sendto(b"Start game", ('<broadcast>', 11002))
+                print("game started")
                 for item in self.gamers:
-                    try:
-                        data = self.game.walls
-                        item.client.send(json.dumps(data).encode('utf-8'))
-                    except:
-                        self.stop()
+                    data = self.game.walls
+                    item.client.send(json.dumps(data).encode('utf-8'))
 
     def broadcast(self):
         self.broad.sendto(self.message, ('<broadcast>', 11002))
@@ -163,7 +163,10 @@ class Server:
                 for item in self.gamers:
                     for i in range(self.Num_of_pl):
                         if item is self.gamers[i] and i != 0:
-                            data[0][i], data[0][0] = data[0][0] , data[0][i]
+                            c = data[0][0].copy()
+                            data[0][0] = data[0][i].copy()
+                            data[0][i] = c
+                            #data[0][i], data[0][0] = data[0][0] , data[0][i]
                     try:
 
                         item.client.send(json.dumps(data).encode('utf-8'))

@@ -47,12 +47,15 @@ class Client:
             pass
 
     def get_information(self):
-        s = self.socket.recv(32000).decode('utf-8')
-        if self.gs2:
-            self.snakes, self.fruits = tuple(json.loads(s))
-        else:
-            self.walls = json.loads(s)
-            self.gs2 = True
+        try:
+            s = self.socket.recv(32000).decode('utf-8')
+            if self.gs2:
+                self.snakes, self.fruits = tuple(json.loads(s))
+            else:
+                self.walls = json.loads(s)
+                self.gs2 = True
+        except:
+            pass
 
 
     def update(self):
