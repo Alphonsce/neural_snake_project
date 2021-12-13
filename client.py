@@ -51,6 +51,7 @@ class Client:
             s = self.socket.recv(32000).decode('utf-8')
             if self.gs2:
                 self.snakes, self.fruits = tuple(json.loads(s))
+
             else:
                 self.walls = json.loads(s)
                 self.gs2 = True
@@ -101,4 +102,4 @@ while x < 30:
     x +=1 
     time.sleep(1)
     cl.update()
-    print"""
+    print(x)"""

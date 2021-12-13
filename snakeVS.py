@@ -83,8 +83,8 @@ class GameVS:
                 try:
                     draw_field_VSmod(self.screen, self.client)
                     step = self.client.snakes[0][0]
-                    (x_0, y_0) = self.client.snakes[0][1]
-                    (x, y) = self.client.snakes[0][2][-1]
+                    (x_0, y_0) = tuple(self.client.snakes[0][1])
+                    (x, y) = tuple(self.client.snakes[0][2][-1])
                     x_0 += step / FRAMES_PER_STEP * (x_0 - x)
                     y_0 += step / FRAMES_PER_STEP * (y_0 - y)
                     self.display.blit(self.screen, (
