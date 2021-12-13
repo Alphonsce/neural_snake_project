@@ -27,7 +27,6 @@ class GameVS:
         self.server = None
         self.players = 1
         self.gamers = 0
-        self.searching = False
         self.VS_mod = True
         self.snake = Direction.RIGHT
 
@@ -59,7 +58,7 @@ class GameVS:
 
             if self.server != None:
                 self.server.update()
-            if self.searching:
+            if self.client != None:
                 self.client.update()
             self.run_game()
             draw_start_menu(menu_buttons, sliders, self.display)
@@ -150,7 +149,6 @@ class GameVS:
     def find_server(self):
         if not self.searching:
             self.client = Client(self)
-            self.searching = True
             print("searching")
 
     def stop_client(self):
