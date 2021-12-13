@@ -53,7 +53,7 @@ def draw_field_VSmod(surf, gamefield):
             (x_0, y_0) = (x, y)
         x += step / FRAMES_PER_STEP * (x_0 - x)
         y += step / FRAMES_PER_STEP * (y_0 - y)
-        return surf
+    return surf
 
 def draw_interface(surf, score):
     """ Полоса в верху экрана, на которой выводится счет

@@ -124,13 +124,11 @@ class Server:
         except:
             data = ""
         if data == b"Hello Snake11002":
-            try:
-                self.serv.settimeout(0.2)
-                client, addr = self.serv.accept()
-                self.gamers.append(Gamer(client, addr, self.game))
-                self.serv.settimeout(0.002)
-            except:
-                pass
+            
+            self.serv.settimeout(2)
+            client, addr = self.serv.accept()
+            self.gamers.append(Gamer(client, addr, self.game))
+            self.serv.settimeout(0.002)
             print(len(self.gamers))
             if len(self.gamers) == self.Num_of_pl:
                 self.connected = True
@@ -155,26 +153,27 @@ class Server:
 
     def update(self):
         if self.connected:
+            #print(self.gamers)
             if self.check_quits():
                 data = [
                     [[gamer.snake.step, gamer.snake.head, gamer.snake.tail] for gamer in self.gamers],
                     [fruit.pos for fruit in self.game.fruits]
                     ]
+                
                 for item in self.gamers:
                     for i in range(self.Num_of_pl):
                         if item is self.gamers[i] and i != 0:
                             c = data[0][0].copy()
                             data[0][0] = data[0][i].copy()
                             data[0][i] = c
-                            #data[0][i], data[0][0] = data[0][0] , data[0][i]
+                            #data[0][i], data[0][0] = data[0][0] , data[0][i]"""
                     try:
-
                         item.client.send(json.dumps(data).encode('utf-8'))
                     except:
                         self.stop()
                     try:
-                        data = item.client.recv(1024)
-                        direction = Direction(tuple(json.loads(data.decode('utf-8'))))
+                        data_client = item.client.recv(1024)
+                        direction = Direction(tuple(json.loads(data_client.decode('utf-8'))))
                     except:
                         direction = Direction(item.snake.speed)
                     item.update(direction)

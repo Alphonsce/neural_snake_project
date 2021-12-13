@@ -92,7 +92,7 @@ class GameVS:
                         - (y_0)* CELL_SIDE + (HEIGHT - BAR_HEIGHT) / 2)
                         )
                 except:
-                    pass
+                    print(self.client.snakes)
                 pygame.display.flip()
 
     def keys_loop(self):
