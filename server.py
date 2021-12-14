@@ -151,12 +151,12 @@ class Server:
             data = b""
         data = data.decode('utf-8')
         if data == "GoodBuy Snake11002":
+            print(addr, "leave")
             self.stop()
         return not (data == "GoodBuy Snake11002")
 
     def update(self):
         if self.connected:
-            print(self.gamers)
             if self.check_quits():
                 data = [
                     [[gamer.snake.step, gamer.snake.head, gamer.snake.tail] for gamer in self.gamers],
@@ -190,6 +190,7 @@ class Server:
             self.join()
 
     def stop(self):
+        print("stop game")
         self.broad.sendto("Stop game".encode('utf-8'), ('<broadcast>', 11002))
         #self.broad.close()
         self.serv.close()
