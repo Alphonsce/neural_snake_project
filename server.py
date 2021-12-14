@@ -75,11 +75,18 @@ class Server_Game:
         for i in range((Num_of_players+1)//2):
             self.fruits.append(FruitVS(self))
 
-        self.walls = [*((FIELD_SIZE_W - 1, y) for y in range(self.field_size_h)),
-            *((self.field_size_w - FIELD_SIZE_W, y) for y in range(self.field_size_h)),
-            *((x, FIELD_SIZE_H - 1) for x in range(self.field_size_w)),
-            *((x, self.field_size_h - FIELD_SIZE_H) for x in range(self.field_size_w))
+        self.walls = [*((FIELD_SIZE_W - 1, y) for y in range(FIELD_SIZE_H - 1, self.field_size_h - FIELD_SIZE_H)),
+            *((self.field_size_w - FIELD_SIZE_W, y) for y in range(FIELD_SIZE_H - 1, self.field_size_h - FIELD_SIZE_H)),
+            *((x, FIELD_SIZE_H - 1) for x in range(FIELD_SIZE_W - 1, self.field_size_w - FIELD_SIZE_W)),
+            *((x, self.field_size_h - FIELD_SIZE_H) for x in range(FIELD_SIZE_W - 1, self.field_size_w - FIELD_SIZE_W + 1))
         ]
+        for i in range(Num_of_players):
+            x = random.randint(FIELD_SIZE_W + 3, self.field_size_w - FIELD_SIZE_W - 3)
+            y = random.randint(FIELD_SIZE_H + 3, self.field_size_h - FIELD_SIZE_H - 3)
+            self.walls.append((x, y))
+            self.walls.append((x + 1, y))
+            self.walls.append((x, y + 3))
+
 
     def update(self):
         self.cell = [0]*self.field_size_w

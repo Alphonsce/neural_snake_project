@@ -132,7 +132,7 @@ class Game:
         self.display = pygame.display.set_mode((WIDTH, HEIGHT))
         menu_buttons = []
         menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 55, self.Player_menu, ()))
-        menu_buttons.append(Button("AI mod",  WIDTH // 2, 400, 250, 55, self.Ai_menu, ()))
+        menu_buttons.append(Button("AI mode",  WIDTH // 2, 400, 250, 55, self.Ai_menu, ()))
         menu_buttons.append(Button("PvP",  WIDTH // 2, 500, 250, 55, self.VS_mod, ()))
         menu_buttons.append(Button("Settings",  WIDTH // 2, 600, 250, 55, self.wait, ()))
         menu_buttons.append(Button("EXIT",  WIDTH // 2 , 700, 250, 55, self.quit_game, ()))
@@ -140,11 +140,12 @@ class Game:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
             self.display.fill((0, 0, 0))
+            draw_start_menu(menu_buttons, [], self.display)
             self.keys_menu()
             for item in menu_buttons:
                 if item.check_pressed(x, y) and self.click:
                     item.func(*item.args)
-            draw_start_menu(menu_buttons, [], self.display)
+
             pygame.display.flip()
 
     def Ai_menu(self):
@@ -160,6 +161,9 @@ class Game:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
             self.display.fill((0, 0, 0))
+            draw_start_menu(menu_buttons, sliders, self.display)
+            draw_text("difficulty", 30, WIDTH / 2, 640, WHITE, self.display)
+            
             self.keys_menu()
             for item in menu_buttons:
                 if item.check_pressed(x, y) and self.click:
@@ -170,12 +174,15 @@ class Game:
                     item.check_press(x, y)
                 if self.unclick:
                     item.deactivate()
-            draw_start_menu(menu_buttons, sliders, self.display)
-            draw_text("difficulty", 30, WIDTH / 2, 640, WHITE, self.display)
+
             pygame.display.flip()
             if self.learning_finish:
                 self.learning_finish = False
+                draw_text("close graph", 100, WIDTH / 2, 340, RED, self.display)
+                draw_text("to continue", 100, WIDTH / 2, 480, RED, self.display)
+                pygame.display.flip()
                 plt.show()
+            
         self.back = False
 
     def Player_menu(self):
@@ -191,6 +198,7 @@ class Game:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
             self.display.fill((0, 0, 0))
+            draw_start_menu(menu_buttons, sliders, self.display)
             self.keys_menu()
             for item in menu_buttons:
                 if item.check_pressed(x, y) and self.click:
@@ -202,7 +210,6 @@ class Game:
                     item.check_press(x, y)
                 if self.unclick:
                     item.deactivate()
-            draw_start_menu(menu_buttons, sliders, self.display)
             pygame.display.flip()
         self.back = False
 
@@ -227,12 +234,12 @@ class Game:
         while self.GAME_RUNNING:
             self.clock.tick(FPS)
             self.display.fill((0, 0, 0))
-            self.keys_loop()
             for field in self.game_fields:
                 field.update()
                 self.display.blit(field.screen, (field.x, BAR_HEIGHT))
                 self.display.blit(field.interf, (field.x, 0))
                 pygame.draw.rect(self.display, (90, 90, 90), [field.x, 0, 0, HEIGHT], 1)
+            self.keys_loop()
             pygame.display.flip()
 
     def keys_loop(self):

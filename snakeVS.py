@@ -44,6 +44,8 @@ class GameVS:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
             self.display.fill((0, 0, 0))
+            draw_start_menu(menu_buttons, sliders, self.display)
+            draw_text("Number of players", 30, WIDTH // 2, 640, WHITE, self.display)
             self.keys_menu()
             for item in menu_buttons:
                 if item.check_pressed(x, y) and self.click:
@@ -61,8 +63,6 @@ class GameVS:
             if self.client != None:
                 self.client.update()
             self.run_game()
-            draw_start_menu(menu_buttons, sliders, self.display)
-            draw_text("Number of players", 30, WIDTH // 2, 640, WHITE, self.display)
             pygame.display.flip()
         self.back = False
         return self.GAME_RUNNING
@@ -72,11 +72,6 @@ class GameVS:
         """
         while self.GAME_RUNNING and self.VS_mod:
             #if self.client.check_server_fall():
-                
-            if self.server != None:
-                self.server.update()
-            self.client.update()
-            self.keys_loop()
             if self.client != None:
                 self.clock.tick(FPS)
                 self.screen.fill((0, 0, 0))
@@ -94,6 +89,10 @@ class GameVS:
                 except:
                     print(self.client.snakes)
                 pygame.display.flip()
+            if self.server != None:
+                self.server.update()
+            self.client.update()
+            self.keys_loop()
 
     def keys_loop(self):
         """ Контроллер. Отвечает за взаимодействие человека с игрой
