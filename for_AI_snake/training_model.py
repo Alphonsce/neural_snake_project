@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import os
 
 class Neural_network(nn.Module):
+    '''просто сама нейронная сеть'''
     def __init__(self, input_size, hidden_size, output_size):
         self.was_loaded = False
         super().__init__()
@@ -32,18 +33,20 @@ class Neural_network(nn.Module):
 
 
 class Q_func_Trainer:
+    '''то что обновляет коэффициенты нейронной сети'''
     def __init__(self, model, lr, gamma):
         self.lr = lr
         self.gamma = gamma
         self.model = model
         self.optimizer = optim.Adam(model.parameters(), lr=self.lr)     # по-сути это градиентный спуск, только более опимизированный
-        self.criterion = nn.MSELoss()       # функция ошибки - среднее значение квадрата отклонения
+        self.criterion = nn.MSELoss()       # функция ошибки - среднее значение квадрата отклонения (это то, что оптимизирует градиентный спуск)
 
     def train_step(self, state, action, reward, next_state, game_over):
         state = torch.tensor(state, dtype=torch.float)
         next_state = torch.tensor(next_state, dtype=torch.float)
         action = torch.tensor(action, dtype=torch.long)
         reward = torch.tensor(reward, dtype=torch.float)
+
 
         if len(state.shape) == 1:       # обучение на 1 итерации
 
@@ -63,15 +66,13 @@ class Q_func_Trainer:
             if not game_over[idx]:
                 Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))       # уравнение Беллмана, оно использует как раз reward 
 # В уравнении Беллмана мы находим потенциально максимальный выход нейронной сети в следующий ход после того хода, для которого уже предсказали выход
-            target[idx][torch.argmax(action[idx]).item()] = Q_new
+
+            target[idx][torch.argmax(action[idx]).item()] = Q_new 
+# определяется Q* - оптимальный Q для хода, считается лишь для того индекса где Q максимален и для которого делается выбор
     
         self.optimizer.zero_grad()
 
         loss = self.criterion(target, prediction)       # функция потерь - это MSE между Q в текущем положении и максимальным Q в следующем положении
-
-# Допустим нейронная сеть выдала нам прогнозы вида: [5, 2, 1] - отсюда мы должны выполнить действие [1, 0, 0], но значения Q соответственно равны 5, 2, 1
-# затем используя уравнение Беллмана мы находим максимально возможное значение Q функции для следующего действия, пусть оно равно [10, 7, 5]
-# тогда loss у нас получится (25 + 9 + 16) / 3
 
         loss.backward()     # это просто последний этап back propagation
 
