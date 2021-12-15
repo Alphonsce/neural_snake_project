@@ -20,5 +20,12 @@
 - agent_for_learning.py
 - learning_model.py
 - AI_snake
+- Модули для игры по сети:
+1. SnakeVS
+2. server
+3. client
+4. graphicsVS
+5. modelVS
+
 
 Модель будет реализована при помощи алгоритма Deep Q learning.
