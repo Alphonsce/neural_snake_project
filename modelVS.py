@@ -21,6 +21,7 @@ class FruitVS:
             if self.game.cell[x][y].value != 0:
                 not_founded = True
         self.pos = x, y
+        self.game.cell[x][y] = Cell.Fruit
     
     def get_pos(self):
         """ Функция возвращает положение фрукта"""
@@ -70,12 +71,15 @@ class SnakeVS:
             if self.alive:
                 self.tail.append(self.head)
                 self.head = (x + Vx, y + Vy)
+                self.game.cell[x][y] = Cell.Snake
+                self.game.cell[x+Vx][y+Vy] = Cell.Head
                 if cell.value == 3:
                     for fruit in self.game.fruits:
                         if fruit.pos == (x + Vx, y + Vy):
                             fruit.new_fruit()
                 else:
-                    self.tail.pop(0)
+                    x, y = self.tail.pop(0)
+                    self.game.cell[x][y] = Cell.Nothing
 
                 
 

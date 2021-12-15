@@ -45,6 +45,11 @@ class Gamer:
         self.deaths += 1
         self.score += self.current_score
         self.current_score = 0
+        x, y = self.snake.head 
+        self.game.cell[x][y] = Cell.Nothing
+        for x, y in self.snake.tail:
+            self.game.cell[x][y] = Cell.Nothing
+        self.snake.alive = False
         self.new_snake()
 
     def new_snake(self):
@@ -103,7 +108,7 @@ class Server_Game:
             self.cell[x][y] = Cell.Fruit
         for item in self.walls:
             x, y = item
-            self.cell[x][y] = Cell.Snake
+            self.cell[x][y] = Cell.Wall
 
 
 class Server:

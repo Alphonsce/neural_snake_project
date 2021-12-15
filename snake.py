@@ -134,8 +134,8 @@ class Game:
         menu_buttons.append(Button("Player only", WIDTH // 2, 300, 250, 55, self.Player_menu, ()))
         menu_buttons.append(Button("AI mode",  WIDTH // 2, 400, 250, 55, self.Ai_menu, ()))
         menu_buttons.append(Button("PvP",  WIDTH // 2, 500, 250, 55, self.VS_mod, ()))
-        menu_buttons.append(Button("Settings",  WIDTH // 2, 600, 250, 55, self.wait, ()))
-        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 700, 250, 55, self.quit_game, ()))
+        #menu_buttons.append(Button("Settings",  WIDTH // 2, 600, 250, 55, self.wait, ()))
+        menu_buttons.append(Button("EXIT",  WIDTH // 2 , 600, 250, 55, self.quit_game, ()))
         while self.GAME_RUNNING:
             x, y = pygame.mouse.get_pos()
             self.clock.tick(FPS)
