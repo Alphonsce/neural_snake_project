@@ -28,7 +28,13 @@ serv.bind(("", 11002))
 serv.listen(10) """
 
 class Gamer:
+    """ Объект игрока, хранящий ся на сервере"""
     def __init__(self, client, addr, game) -> None:
+        """ Инициализация игрока. 
+        Здесь хранится информация о нем
+        client, addr - Информация для сервера для отправки сообщений 
+        game - игровое поле, необходимое для обработки событий
+        """
         self.client = client
         self.addr = addr
         self.game = game
@@ -38,10 +44,12 @@ class Gamer:
         self.deaths = 0
 
     def update(self, direction):
+        """ Обновление направления движения змеи"""
         self.snake.direction = direction
         self.snake.move()
 
     def death(self):
+        """ Метод вызывается при смерти змеи """
         self.deaths += 1
         self.score += self.current_score
         self.current_score = 0
@@ -53,6 +61,7 @@ class Gamer:
         self.new_snake()
 
     def new_snake(self):
+        """ Создание змеи с проверкой отсутствия препятствий в округе """
         not_found = True
         while not_found:
             x, y = (random.randint(FIELD_SIZE_W + 3, self.game.field_size_w - FIELD_SIZE_W - 4),
@@ -66,9 +75,15 @@ class Gamer:
         self.snake = SnakeVS(x, y, self.game, self)
 
 class Server_Game:
+    """ Выделеннная часть сервера, хранящая информацию о поле"""
     def __init__(self, Num_of_players, gamers) -> None:
+        """ Поле зависит от количества игроков на нем.
+        Num_of_players - Предполагаемое количество игроков
+        gamers - массив игроков, играющих на поле
+        """
         self.gamers = gamers
 
+        #  Задание размеров поля 
         self.field_size_w = FIELD_SIZE_W * 2 + int(20 * sqrt(Num_of_players))
         self.field_size_h = FIELD_SIZE_H * 2 + int(20 * sqrt(Num_of_players))
 
@@ -76,10 +91,12 @@ class Server_Game:
         for i in range(self.field_size_w):
             self.cell[i]=[Cell.Nothing]*self.field_size_h
 
+        # Начальная расстановка фруктов
         self.fruits =[]
         for i in range((Num_of_players+1)//2):
             self.fruits.append(FruitVS(self))
 
+        # Создание ландшафта для поля
         self.walls = [*((FIELD_SIZE_W - 1, y) for y in range(FIELD_SIZE_H - 1, self.field_size_h - FIELD_SIZE_H)),
             *((self.field_size_w - FIELD_SIZE_W, y) for y in range(FIELD_SIZE_H - 1, self.field_size_h - FIELD_SIZE_H)),
             *((x, FIELD_SIZE_H - 1) for x in range(FIELD_SIZE_W - 1, self.field_size_w - FIELD_SIZE_W)),
@@ -94,6 +111,8 @@ class Server_Game:
 
 
     def update(self):
+        """ Обновление состояния поля.
+        На самом деле его можно делать реже, в чем нет необходимости"""
         self.cell = [0]*self.field_size_w
         for i in range(self.field_size_w):
             self.cell[i]=[Cell.Nothing]*self.field_size_h
@@ -112,7 +131,14 @@ class Server_Game:
 
 
 class Server:
+    """ Сервер, отвечающий за получение и отправку информации
+    Так же он вызывает обновление игрового поля"""
     def __init__(self, Num_of_players) -> None:
+        """ Создание сервера с двумя сокетами. 
+        Один для броадкастов и необязательных сообщений 
+        Второй для потоковой информации 
+        Num_of_players - планируемое количество игроков в игре
+        """
         self.Num_of_pl = Num_of_players
         self.broad = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         self.broad.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -131,6 +157,7 @@ class Server:
         
 
     def join(self):
+        """ Обработка событий присоединения игроков """
         try:
             data, addr = self.broad.recvfrom(1024)
         except:
@@ -153,10 +180,12 @@ class Server:
                     item.client.send(json.dumps(data).encode('utf-8'))
 
     def broadcast(self):
+        """ Создание оповещения о начале игры"""
         self.broad.sendto(self.message, ('<broadcast>', 11002))
         print("message sent!")
                   
     def check_quits(self):
+        """ Проверка на подключенность всех игроков"""
         try:
             data, addr = self.broad.recvfrom(1024)
         except:
@@ -168,6 +197,10 @@ class Server:
         return not (data == "GoodBuy Snake11002")
 
     def update(self):
+        """ Обновление сервера.
+        Здесь есть ветвление:
+        Для игры уже при self.connected
+        иначе - для подключения игроков"""
         if self.connected:
             if self.check_quits():
                 data = [
@@ -202,6 +235,7 @@ class Server:
             self.join()
 
     def stop(self):
+        """ Остановка сервера с рассылкой информации об окончании игры."""
         print("stop game")
         self.broad.sendto("Stop game".encode('utf-8'), ('<broadcast>', 11002))
         #self.broad.close()

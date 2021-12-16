@@ -16,7 +16,10 @@ print("Текущее время: %s" % tm.decode("utf-8")) # получаем �
 
 
 class Client:
+    """Клиент для игры по сети"""
     def __init__(self, gameVS) -> None:
+        """Инициализация клиента в виде двух сокетов для 
+        основной передачи данных и принятия/отправки дополнительных сообщений"""
         self.game = gameVS
         self.serv = None
         self.gs2 = False
@@ -38,15 +41,19 @@ class Client:
 
 
     def check_server_fall(self):
+        """ Проверка на наличие подключения к серверу."""
+
         return self.connected
 
     def send_direction(self, direction):
+        """ Отправка информации о нажатых игроком кнопках"""
         try:
             self.socket.send((json.dumps(direction.value)).encode('utf-8'))
         except:
             pass
 
     def get_information(self):
+        """ Обновление информации об игровом поле"""
         try:
             s = self.socket.recv(32000).decode('utf-8')
             if self.gs2:
@@ -60,6 +67,7 @@ class Client:
 
 
     def update(self):
+        """ Шаг цикла клиента"""
         self.look_up_server()
         if self.game_started:
             self.get_information()
@@ -67,6 +75,7 @@ class Client:
         
 
     def look_up_server(self):
+        """ Проверка наличия сообщений от Сервера"""
         try:
             data, (addr, port) = self.broadcaster.recvfrom(1024)
         except:
@@ -90,10 +99,12 @@ class Client:
             self.connected = False
 
     def stop(self):
+        """ Остановка подключения """
         #self.broadcaster.close()
         self.socket.close()
 
     def quit_game(self):
+        """ Выход из игры с отправкой сообщения на сервер"""
         if self.serv != None:
             self.broadcaster.sendto(b"GoodBuy Snake11002", self.serv)
 

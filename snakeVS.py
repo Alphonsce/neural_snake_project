@@ -3,7 +3,7 @@ import pygame
 from pygame import display
 
 
-from model import *
+
 from graphics import *
 from constans import *
 from server import *
@@ -11,11 +11,13 @@ from client import *
 from graphicsVS import *
 
 class GameVS:
-    """ Объект типа игра отвечает за дисплей и циклы игры
+    """ Объект типа онлайн игра отвечает за дисплей и циклы игры
     Также отвечает за ввод и распределение гейммодов
     """
     def __init__(self, game):
-        """ Создание объекта типа игра"""
+        """ Создание объекта типа игра
+        game - игра типа Game из файла snake
+        """
         self.clock = pygame.time.Clock()
         self.game = game
         self.display = self.game.display
@@ -31,7 +33,9 @@ class GameVS:
         self.snake = Direction.RIGHT
 
     def start_menu(self):
-        """ Стартовое меню отвечает за выбор и распределение игровых модов """
+        """ Стартовое меню отвечает за запуск и остановку сервера
+        корректировку количества игроков. Поиск сервера для игры
+         """
         self.menu = True
         menu_buttons = []
         sliders = []
@@ -128,9 +132,11 @@ class GameVS:
                     self.unclick = True
     
     def wait(self):
+        """Пустая функция ожидания"""
         pass
 
     def go_back(self):
+        """Возврат в основную игру"""
         self.stop_server()
         if self.client != None:
             self.client.quit_game()
@@ -138,33 +144,39 @@ class GameVS:
         self.VS_mod = False
 
     def run_server(self):
+        """Запуск сервера"""
         if self.server == None:
             self.server = Server(self.players)
             print("start")
 
     def stop_server(self):
+        """Остановка сервера"""
         if self.server != None:
             self.server.stop()
             self.server = None
             print("stop")
 
     def find_server(self):
+        """Начало поиска сервера"""
         if self.client == None:
             self.client = Client(self)
             print("searching")
 
     def stop_client(self):
+        """Остановка клиента"""
         if self.client != None:
             self.client.stop()
             self.client = None
             self.go_back()
 
     def run_game(self):
+        """Запуск игрового поля"""
         if self.client != None:
             if self.client.game_started:
                 self.mainloop()
 
     def quit_game(self):
+        """ Выход из игры"""
         self.server.stop()
         self.GAME_RUNNING = False
 

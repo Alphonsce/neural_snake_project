@@ -4,15 +4,15 @@ import random
 class FruitVS:
     """ Тип фрукта"""
     def __init__(self, game):
-        """ Создание фрукта перебором возможных координат
-        на вход подаются 
-        snakepose - координаты частей хвоста
-        snakehead - координаты головы
+        """Создание фрукта. На вход передается 
+        game - игровое поле 
         """
         self.game = game
         self.new_fruit()
 
     def new_fruit(self):
+        """ Создание фрукта перебором возможных координат
+        """
         not_founded = True
         while not_founded:
             not_founded = False
@@ -32,7 +32,8 @@ class SnakeVS:
     def __init__(self, x, y, game, gamer):
         """ Создание змеи 
         x, y - начальные координаты головы 
-        gamefield - игровое поле, в котором змейка перемещается
+        game - игровое поле, в котором змейка перемещается
+        gamer - игрок, управляющий змеей
         """
         self.tail = [(x-2, y), (x-1, y)]
         self.head = (x, y)
@@ -45,7 +46,7 @@ class SnakeVS:
 
     def move(self):
         """ Отвечает за перемещение змеи
-        fruit - положение фрукта на поле
+        Положение объектов считывается из self.game
         """
         if self.alive:
             self.step += 1
