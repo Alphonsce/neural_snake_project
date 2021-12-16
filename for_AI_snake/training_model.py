@@ -61,7 +61,8 @@ class Q_func_Trainer:
         target = prediction.clone()
         for idx in range(len(game_over)):
             # на всём batch'е обучаемся
-            Q_new = reward[idx]     # если игра еще не закончилась, то мы большого прогона не делаем и полагаем что максимальный выход - reward в ход после предсказания
+            Q_new = reward[idx]     # если игра закончилась, то мы просто берем reward в последний шаг, чтобы она стремилась получать большой reward, но + gamma * Q_предыдущее
+                                    # мы не делаем, чтобы она убиваться не хотела
             
             if not game_over[idx]:
                 Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))       # уравнение Беллмана, оно использует как раз reward 
