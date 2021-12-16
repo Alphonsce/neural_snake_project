@@ -47,9 +47,8 @@ class Q_func_Trainer:
         action = torch.tensor(action, dtype=torch.long)
         reward = torch.tensor(reward, dtype=torch.float)
 
-
         if len(state.shape) == 1:       # обучение на 1 итерации
-
+            '''если делаем обучение для 1 хода, то необходимо тензор сделать одномерным, unsqueeze делает тензор нужной размерности + 1'''
             state = torch.unsqueeze(state, 0)
             next_state = torch.unsqueeze(next_state, 0)
             action = torch.unsqueeze(action, 0)
@@ -57,6 +56,7 @@ class Q_func_Trainer:
             game_over = (game_over, )
 
         prediction = self.model(state)      # model(state) выполняет model.forward, вот так вот torch работает, в итоге имеем Q для 3 выходных нейронов
+        # когда обучение на всей памяти в конце игры, то получаем для каждого элемента из states свой список из 3 элементов
 
         target = prediction.clone()
         for idx in range(len(game_over)):
