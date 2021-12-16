@@ -1,8 +1,7 @@
-import socket
 import json
+import socket
 
-import constans
-from for_AI_snake.AI_constans import Direction
+from constans import *
 
 """s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # создаем аналогичный сокет, как у сервера
 s.connect(("localhost", 10000)) # коннектимся с сервером

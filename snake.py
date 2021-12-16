@@ -1,15 +1,13 @@
-import numpy
-import pygame
 import matplotlib.pyplot as plt
-
-from model import *
-from graphics import *
-from constans import *
+import numpy as np
+import pygame
 
 import snakeVS
 from agent import Learning_Agent as agent
 from agent import training_process
-
+from constans import *
+from graphics import *
+from model import *
 
 
 class Game_field:

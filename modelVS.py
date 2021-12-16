@@ -1,5 +1,7 @@
-from constans import *
 import random
+
+from constans import *
+
 
 class FruitVS:
     """ Тип фрукта"""

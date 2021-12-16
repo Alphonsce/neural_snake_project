@@ -1,6 +1,7 @@
 import pygame
-import numpy as np
+
 from constans import *
+
 
 class Slider():
     def __init__(self, x, y, width, positions: tuple) -> None:

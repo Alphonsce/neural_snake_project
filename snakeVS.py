@@ -1,6 +1,6 @@
-import numpy
+
 import pygame
-from pygame import display
+
 
 
 

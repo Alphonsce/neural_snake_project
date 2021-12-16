@@ -1,13 +1,13 @@
+import json
 import random
 import socket
 import time
-import json
+
 import pygame
 from numpy import sqrt
 
 from constans import *
 from modelVS import *
-
 
 """serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Создается сокет протокола TCP
 serv.bind(("", 10000)) # Присваиваем ему порт 10000

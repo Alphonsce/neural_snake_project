@@ -1,14 +1,16 @@
-import torch
-import torch.nn as nn
-import numpy as np
-import pygame
 import random
 from collections import deque
-import matplotlib.pyplot as plt
 
-from model import *
+import matplotlib.pyplot as plt
+import numpy as np
+import pygame
+import torch
+import torch.nn as nn
+
 from constans import *
 from for_AI_snake.training_model import *
+from model import *
+
 
 class Learning_Agent:
     '''Агент - это то, что управляет игрой, 
